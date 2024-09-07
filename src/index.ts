@@ -32,8 +32,11 @@ app.openapi(
   }
 );
 
-app.get("/ui", swaggerUI({ url: "/doc" }));
+app.get("/ui", swaggerUI({ url: "swagger.json" }));
 
-app.doc("/doc", { info: { title: "An API", version: "v1" }, openapi: "3.1.0" });
+app.doc("swagger.json", {
+  info: { title: "An API", version: "v1" },
+  openapi: "3.1.0",
+});
 
 export default app;
