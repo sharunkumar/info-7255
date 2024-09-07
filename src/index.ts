@@ -6,7 +6,12 @@ const app = new OpenAPIHono();
 app.openapi(
   createRoute({
     method: "get",
-    path: "/hello",
+    path: "/hello/:name",
+    request: {
+      params: z.object({
+        name: z.string(),
+      }),
+    },
     responses: {
       200: {
         description: "Respond a message",
@@ -22,7 +27,7 @@ app.openapi(
   }),
   (c) => {
     return c.json({
-      message: "hello",
+      message: "hello " + c.req.param.name,
     });
   }
 );
