@@ -9,7 +9,8 @@
     "@hono/swagger-ui": "^0.4.1",
     "@hono/zod-openapi": "^0.16.0",
     "@hono/zod-validator": "^0.2.2",
-    "hono": "^4.5.11"
+    "hono": "^4.5.11",
+    "prisma": "^5.19.1"
   },
   "devDependencies": {
     "@types/bun": "latest"
