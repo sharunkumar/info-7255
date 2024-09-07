@@ -1,6 +1,7 @@
 {
   "name": "info-7255",
   "scripts": {
+    "start": "bun src/index.ts",
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
