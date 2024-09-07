@@ -28,9 +28,9 @@ app.openapi(
       },
     },
   }),
-  (c) => {
-    return c.json({
-      message: "hello " + c.req.param("name"),
+  (ctx) => {
+    return ctx.json({
+      message: "hello " + ctx.req.param("name"),
     });
   }
 );
