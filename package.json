@@ -2,7 +2,8 @@
   "name": "info-7255",
   "scripts": {
     "start": "bun src/index.ts",
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot src/index.ts",
+    "build": "bun build --compile src/index.ts --outfile dist/api"
   },
   "dependencies": {
     "@hono/swagger-ui": "^0.4.1",
