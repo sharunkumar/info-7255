@@ -1,7 +1,10 @@
 import { swaggerUI } from "@hono/swagger-ui";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+import { logger } from "hono/logger";
 
 const app = new OpenAPIHono();
+
+app.use(logger());
 
 app.openapi(
   createRoute({
