@@ -27,7 +27,7 @@ app.openapi(
   }),
   (c) => {
     return c.json({
-      message: "hello " + c.req.param.name,
+      message: "hello " + c.req.param("name"),
     });
   }
 );
