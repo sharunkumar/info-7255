@@ -3,12 +3,14 @@
   "scripts": {
     "start": "bun src/index.ts",
     "dev": "bun run --hot src/index.ts",
+    "db:push": "prisma db push",
     "build": "bun build --compile src/index.ts --outfile dist/api"
   },
   "dependencies": {
     "@hono/swagger-ui": "^0.4.1",
     "@hono/zod-openapi": "^0.16.0",
     "@hono/zod-validator": "^0.2.2",
+    "@prisma/client": "5.19.1",
     "hono": "^4.5.11",
     "prisma": "^5.19.1"
   },

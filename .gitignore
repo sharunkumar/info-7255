@@ -67,3 +67,8 @@ package-lock.json
 !**/.vscode/settings.template.json
 !**/.vscode/launch.template.json
 !**/.vscode/extensions.json
+
+# Database
+.env
+*.db
+*.sqlite
