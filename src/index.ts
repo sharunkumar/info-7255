@@ -1,6 +1,8 @@
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { PrismaClient } from "@prisma/client";
 import { logger } from "hono/logger";
+import { bootstrapDatabase } from "./functions/bootstrap-database";
 import { hello } from "./routes/hello";
 import { user } from "./routes/user";
 
@@ -17,5 +19,7 @@ app.doc("swagger.json", {
   info: { title: "INFO7255", version: "v1" },
   openapi: "3.1.0",
 });
+
+bootstrapDatabase(new PrismaClient());
 
 export default app;

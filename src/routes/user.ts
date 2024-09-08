@@ -25,6 +25,14 @@ export const user = new OpenAPIHono().openapi(
     },
   }),
   async (ctx) => {
-    return ctx.json(await prisma.user.findMany());
+    return ctx.json(
+      await prisma.user.findMany({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      })
+    );
   }
 );
