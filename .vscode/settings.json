@@ -3,6 +3,7 @@
         "source.removeUnusedImports": "always",
         "source.sortImports": "always"
     },
+    "npm.packageManager": "bun",
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     }
