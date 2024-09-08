@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { IntFilterObjectSchema } from './IntFilter.schema';
 import { StringFilterObjectSchema } from './StringFilter.schema';
-import { StringNullableFilterObjectSchema } from './StringNullableFilter.schema';
 
 import type { Prisma } from '@prisma/client';
 
@@ -28,9 +27,8 @@ const Schema: z.ZodType<Prisma.UserWhereInput> = z
       .union([z.lazy(() => StringFilterObjectSchema), z.string()])
       .optional(),
     name: z
-      .union([z.lazy(() => StringNullableFilterObjectSchema), z.string()])
-      .optional()
-      .nullable(),
+      .union([z.lazy(() => StringFilterObjectSchema), z.string()])
+      .optional(),
   })
   .strict();
 

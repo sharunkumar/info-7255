@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { SortOrderSchema } from '../enums/SortOrder.schema';
-import { SortOrderInputObjectSchema } from './SortOrderInput.schema';
 import { UserCountOrderByAggregateInputObjectSchema } from './UserCountOrderByAggregateInput.schema';
 import { UserAvgOrderByAggregateInputObjectSchema } from './UserAvgOrderByAggregateInput.schema';
 import { UserMaxOrderByAggregateInputObjectSchema } from './UserMaxOrderByAggregateInput.schema';
@@ -13,12 +12,7 @@ const Schema: z.ZodType<Prisma.UserOrderByWithAggregationInput> = z
   .object({
     id: z.lazy(() => SortOrderSchema).optional(),
     email: z.lazy(() => SortOrderSchema).optional(),
-    name: z
-      .union([
-        z.lazy(() => SortOrderSchema),
-        z.lazy(() => SortOrderInputObjectSchema),
-      ])
-      .optional(),
+    name: z.lazy(() => SortOrderSchema).optional(),
     _count: z.lazy(() => UserCountOrderByAggregateInputObjectSchema).optional(),
     _avg: z.lazy(() => UserAvgOrderByAggregateInputObjectSchema).optional(),
     _max: z.lazy(() => UserMaxOrderByAggregateInputObjectSchema).optional(),

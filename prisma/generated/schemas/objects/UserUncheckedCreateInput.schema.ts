@@ -6,7 +6,7 @@ const Schema: z.ZodType<Prisma.UserUncheckedCreateInput> = z
   .object({
     id: z.number().optional(),
     email: z.string(),
-    name: z.string().optional().nullable(),
+    name: z.string(),
   })
   .strict();
 
