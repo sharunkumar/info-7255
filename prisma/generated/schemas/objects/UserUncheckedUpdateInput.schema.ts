@@ -24,6 +24,12 @@ const Schema: z.ZodType<Prisma.UserUncheckedUpdateInput> = z
         z.lazy(() => StringFieldUpdateOperationsInputObjectSchema),
       ])
       .optional(),
+    password: z
+      .union([
+        z.string(),
+        z.lazy(() => StringFieldUpdateOperationsInputObjectSchema),
+      ])
+      .optional(),
   })
   .strict();
 

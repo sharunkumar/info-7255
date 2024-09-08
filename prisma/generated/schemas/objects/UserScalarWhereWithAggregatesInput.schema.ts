@@ -31,6 +31,9 @@ const Schema: z.ZodType<Prisma.UserScalarWhereWithAggregatesInput> = z
     name: z
       .union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()])
       .optional(),
+    password: z
+      .union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()])
+      .optional(),
   })
   .strict();
 

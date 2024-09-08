@@ -29,6 +29,9 @@ const Schema: z.ZodType<Prisma.UserWhereInput> = z
     name: z
       .union([z.lazy(() => StringFilterObjectSchema), z.string()])
       .optional(),
+    password: z
+      .union([z.lazy(() => StringFilterObjectSchema), z.string()])
+      .optional(),
   })
   .strict();
 

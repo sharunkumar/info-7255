@@ -6,6 +6,7 @@ const Schema: z.ZodType<Prisma.UserCreateInput> = z
   .object({
     email: z.string(),
     name: z.string(),
+    password: z.string(),
   })
   .strict();
 

@@ -8,6 +8,7 @@ const Schema: z.ZodType<Prisma.UserOrderByWithRelationInput> = z
     id: z.lazy(() => SortOrderSchema).optional(),
     email: z.lazy(() => SortOrderSchema).optional(),
     name: z.lazy(() => SortOrderSchema).optional(),
+    password: z.lazy(() => SortOrderSchema).optional(),
   })
   .strict();
 
