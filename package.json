@@ -2,7 +2,9 @@
   "name": "info-7255",
   "scripts": {
     "start": "bun src/index.ts",
-    "dev": "bun run --hot src/index.ts",
+    "dev": "concurrently --prefix-colors auto bun:dev:server bun:dev:studio",
+    "dev:server": "bun run --hot src/index.ts",
+    "dev:studio": "prisma studio --browser none",
     "db:push": "prisma db push",
     "schema:generate": "prisma generate",
     "build": "bun build --compile src/index.ts --outfile dist/api"
@@ -17,6 +19,7 @@
     "prisma-zod-generator": "^0.8.13"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "concurrently": "^9.0.1"
   }
 }
