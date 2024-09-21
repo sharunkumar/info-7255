@@ -3,14 +3,19 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { PrismaClient } from "@prisma/client";
 import { logger } from "hono/logger";
 import { bootstrapDatabase } from "./functions/bootstrap-database";
+import { auth } from "./middleware/auth";
 import { hello } from "./routes/hello";
 import { user } from "./routes/user";
 
 const app = new OpenAPIHono();
+const prismaClient = new PrismaClient();
 
 app.use(logger());
 
 app.route("/hello", hello);
+
+app.use(auth(prismaClient));
+
 app.route("/user", user);
 
 app.get("/ui", swaggerUI({ url: "swagger.json" }));
@@ -20,6 +25,6 @@ app.doc("swagger.json", {
   openapi: "3.1.0",
 });
 
-bootstrapDatabase(new PrismaClient());
+bootstrapDatabase(prismaClient);
 
 export default app;
