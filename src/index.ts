@@ -4,15 +4,12 @@ import { PrismaClient } from "@prisma/client";
 import { logger } from "hono/logger";
 import { bootstrapDatabase } from "./functions/bootstrap-database";
 import { auth } from "./middleware/auth";
-import { hello } from "./routes/hello";
 import { user } from "./routes/user";
 
 const app = new OpenAPIHono();
 const prismaClient = new PrismaClient();
 
 app.use(logger());
-
-app.route("/hello", hello);
 
 app.use(auth(prismaClient));
 
