@@ -2,6 +2,7 @@
     "recommendations": [
         "oven.bun-vscode",
         "esbenp.prettier-vscode",
-        "rangav.vscode-thunder-client"
+        "rangav.vscode-thunder-client",
+        "chrisbibby.hide-node-modules"
     ]
 }
