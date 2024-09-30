@@ -3,6 +3,7 @@
         "oven.bun-vscode",
         "esbenp.prettier-vscode",
         "rangav.vscode-thunder-client",
-        "chrisbibby.hide-node-modules"
+        "chrisbibby.hide-node-modules",
+        "bruno-api-client.bruno"
     ]
 }

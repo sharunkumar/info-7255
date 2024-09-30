@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import { logger } from "hono/logger";
 import { bootstrapDatabase } from "./functions/bootstrap-database";
 import { auth } from "./middleware/auth";
+import { plan } from "./routes/plan";
 import { user } from "./routes/user";
 
 const app = new OpenAPIHono();
@@ -14,6 +15,7 @@ app.use(logger());
 app.use(auth(prismaClient));
 
 app.route("/user", user);
+app.route("/plan", plan);
 
 app.get("/ui", swaggerUI({ url: "swagger.json" }));
 
