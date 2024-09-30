@@ -10,7 +10,7 @@ import { user } from "./routes/user";
 
 const app = new OpenAPIHono();
 const prismaClient = new PrismaClient();
-const redisClient = await createClient()
+const redisClient = await createClient({ url: process.env.REDIS_URL })
   .on("error", (err) => console.log("Redis Client Error", err))
   .connect();
 
