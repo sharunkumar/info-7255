@@ -1,4 +1,5 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+import zu from "zod_utilz";
 import { RedisClient } from "../functions/get-redis-client";
 import { PlanSchema } from "../schema/schema";
 
@@ -72,16 +73,28 @@ export const plan = (client: RedisClient) =>
             content: {
               "application/json": {
                 schema: z.object({
-                  plan: z.any(),
+                  plan: PlanSchema,
                 }),
               },
             },
+          },
+          404: {
+            description: "Plan not found",
           },
         },
       }),
       async (c) => {
         const id = c.req.param("id");
-        const plan = JSON.parse((await client.get(`plan--${id}`)) ?? "{}");
+        const plan = zu.SPR(
+          PlanSchema.safeParse(
+            zu.SPR(zu.stringToJSON().safeParse(await client.get(`plan--${id}`)))
+              .data
+          )
+        ).data;
+        if (plan == null) {
+          c.status(404);
+          return c.body(null);
+        }
         return c.json({ plan });
       }
     )
