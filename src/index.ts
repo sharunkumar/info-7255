@@ -2,24 +2,22 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { PrismaClient } from "@prisma/client";
 import { logger } from "hono/logger";
-import { createClient } from "redis";
 import { bootstrapDatabase } from "./functions/bootstrap-database";
+import { getRedisClient } from "./functions/get-redis-client";
 import { auth } from "./middleware/auth";
 import { plan } from "./routes/plan";
 import { user } from "./routes/user";
 
 const app = new OpenAPIHono();
 const prismaClient = new PrismaClient();
-const redisClient = await createClient({ url: process.env.REDIS_URL })
-  .on("error", (err) => console.log("Redis Client Error", err))
-  .connect();
+const redisClient = await getRedisClient();
 
 app.use(logger());
 
 app.use(auth(prismaClient));
 
 app.route("/user", user);
-app.route("/plan", plan);
+app.route("/plan", plan(redisClient));
 
 app.get("/ui", swaggerUI({ url: "swagger.json" }));
 
