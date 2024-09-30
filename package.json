@@ -2,7 +2,7 @@
   "name": "info-7255",
   "scripts": {
     "start": "bun src/index.ts",
-    "dev": "concurrently --prefix-colors auto bun:dev:server bun:dev:studio",
+    "dev": "concurrently --prefix-colors auto bun:dev:*",
     "dev:server": "bun run --hot src/index.ts",
     "dev:studio": "prisma studio --browser none",
     "db:push": "prisma db push",
@@ -13,9 +13,9 @@
     "@hono/swagger-ui": "^0.4.1",
     "@hono/zod-openapi": "^0.16.0",
     "@hono/zod-validator": "^0.2.2",
-    "@prisma/client": "5.19.1",
+    "@prisma/client": "^5.20.0",
     "hono": "^4.6.2",
-    "prisma": "^5.19.1",
+    "prisma": "^5.20.0",
     "prisma-zod-generator": "^0.8.13",
     "zod": "^3.23.8"
   },
