@@ -20,19 +20,19 @@ export const plan = (client: RedisClient) =>
         responses: {
           201: {
             description: "Plan created successfully",
-            content: {
-              "application/json": {
-                schema: z.object({
-                  message: z.string(),
-                }),
-              },
-            },
           },
         },
       }),
       async (c) => {
-        // TODO: Implement create logic
-        return c.json({ message: "Plan created successfully" }, 201);
+        const plan = c.req.valid("json");
+
+        await client.set(
+          `plan--${plan.objectId}`,
+          JSON.stringify(plan, null, 2)
+        );
+        c.status(201);
+
+        return c.body(null);
       }
     )
     .openapi(
