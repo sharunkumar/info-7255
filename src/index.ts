@@ -5,7 +5,7 @@ import { logger } from "hono/logger";
 import { bootstrapDatabase } from "./functions/bootstrap-database";
 import { getRedisClient } from "./functions/get-redis-client";
 import { auth } from "./middleware/auth";
-import { plan } from "./routes/plan";
+import { plan } from "./routes/plan/plan";
 import { user } from "./routes/user";
 
 const app = new OpenAPIHono();
