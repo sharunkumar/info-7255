@@ -8,15 +8,8 @@ export const deletePlanByIdSpec = createRoute({
     }),
   },
   responses: {
-    200: {
+    204: {
       description: "Plan deleted successfully",
-      content: {
-        "application/json": {
-          schema: z.object({
-            message: z.string(),
-          }),
-        },
-      },
     },
   },
 });

@@ -24,8 +24,7 @@ export const plan = (client: RedisClient) =>
       const id = c.req.param("id");
       const plan = await getRedisValue(client, `plan--${id}`, PlanSchema);
       if (plan == null) {
-        c.status(404);
-        return c.body(null);
+        return c.body(null, 404);
       }
       return c.json({ plan });
     })
@@ -36,6 +35,6 @@ export const plan = (client: RedisClient) =>
     // })
     .openapi(deletePlanByIdSpec, async (c) => {
       const id = c.req.param("id");
-      // TODO: Implement delete logic
-      return c.json({ message: "Plan deleted successfully" });
+      await client.del(`plan--${id}`);
+      return c.body(null, 204);
     });
