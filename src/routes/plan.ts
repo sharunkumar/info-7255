@@ -1,6 +1,6 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import zu from "zod_utilz";
 import { RedisClient } from "../functions/get-redis-client";
+import { getRedisValue } from "../functions/get-redis-value";
 import { PlanSchema } from "../schema/schema";
 
 export const plan = (client: RedisClient) =>
@@ -85,12 +85,7 @@ export const plan = (client: RedisClient) =>
       }),
       async (c) => {
         const id = c.req.param("id");
-        const plan = zu.SPR(
-          PlanSchema.safeParse(
-            zu.SPR(zu.stringToJSON().safeParse(await client.get(`plan--${id}`)))
-              .data
-          )
-        ).data;
+        const plan = await getRedisValue(client, `plan--${id}`, PlanSchema);
         if (plan == null) {
           c.status(404);
           return c.body(null);
