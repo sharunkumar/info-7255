@@ -1,6 +1,7 @@
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { PrismaClient } from "@prisma/client";
+import { etag } from "hono/etag";
 import { logger } from "hono/logger";
 import { bootstrapDatabase } from "./functions/bootstrap-database";
 import { getRedisClient } from "./functions/get-redis-client";
@@ -17,6 +18,9 @@ app.use(logger());
 app.use(auth(prismaClient));
 
 app.route("/user", user);
+
+app.use(etag());
+
 app.route("/plan", plan(redisClient));
 
 app.get("/ui", swaggerUI({ url: "swagger.json" }));
