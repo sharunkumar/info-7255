@@ -16,7 +16,6 @@
     "@prisma/client": "^5.20.0",
     "hono": "^4.6.2",
     "prisma": "^5.20.0",
-    "prisma-zod-generator": "^0.8.13",
     "zod": "^3.23.8"
   },
   "devDependencies": {
