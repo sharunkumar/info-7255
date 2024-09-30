@@ -71,17 +71,18 @@ export const plan = (client: RedisClient) =>
             description: "Specific plan",
             content: {
               "application/json": {
-                schema: PlanSchema,
+                schema: z.object({
+                  plan: z.any(),
+                }),
               },
             },
           },
         },
       }),
-      // @ts-expect-error: FIXME
       async (c) => {
         const id = c.req.param("id");
-        // TODO: Implement read specific logic
-        return c.json({ plan: { id } });
+        const plan = JSON.parse((await client.get(`plan--${id}`)) ?? "{}");
+        return c.json({ plan });
       }
     )
     .openapi(
