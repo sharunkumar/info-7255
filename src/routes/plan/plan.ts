@@ -4,9 +4,7 @@ import { getRedisValue } from "../../functions/get-redis-value";
 import { PlanSchema } from "../../schema/schema";
 import { createPlanSpec } from "./create-plan";
 import { deletePlanByIdSpec } from "./delete-plan-by-id";
-import { getAllPlansSpec } from "./get-all-plans";
 import { getPlanByIdSpec } from "./get-plan-by-id";
-import { updatePlanByIdSpec } from "./update-plan-by-id";
 
 export const plan = (client: RedisClient) =>
   new OpenAPIHono()
@@ -18,10 +16,10 @@ export const plan = (client: RedisClient) =>
 
       return c.body(null);
     })
-    .openapi(getAllPlansSpec, async (c) => {
-      // TODO: Implement read all logic
-      return c.json({ plans: [] });
-    })
+    // .openapi(getAllPlansSpec, async (c) => {
+    //   // TODO: Implement read all logic
+    //   return c.json({ plans: [] });
+    // })
     .openapi(getPlanByIdSpec, async (c) => {
       const id = c.req.param("id");
       const plan = await getRedisValue(client, `plan--${id}`, PlanSchema);
@@ -31,11 +29,11 @@ export const plan = (client: RedisClient) =>
       }
       return c.json({ plan });
     })
-    .openapi(updatePlanByIdSpec, async (c) => {
-      const id = c.req.param("id");
-      // TODO: Implement update logic
-      return c.json({ message: "Plan updated successfully" });
-    })
+    // .openapi(updatePlanByIdSpec, async (c) => {
+    //   const id = c.req.param("id");
+    //   // TODO: Implement update logic
+    //   return c.json({ message: "Plan updated successfully" });
+    // })
     .openapi(deletePlanByIdSpec, async (c) => {
       const id = c.req.param("id");
       // TODO: Implement delete logic
