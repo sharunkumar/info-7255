@@ -11,10 +11,19 @@ export const plan = (client: RedisClient) =>
     .openapi(createPlanSpec, async (c) => {
       const plan = c.req.valid("json");
 
-      await client.set(`plan--${plan.objectId}`, JSON.stringify(plan, null, 2));
-      c.status(201);
+      const existingPlan = await getRedisValue(
+        client,
+        `plan--${plan.objectId}`,
+        PlanSchema
+      );
 
-      return c.body(null);
+      if (existingPlan) {
+        return c.json({ error: "Plan already exists" }, 409);
+      }
+
+      await client.set(`plan--${plan.objectId}`, JSON.stringify(plan, null, 2));
+
+      return c.body(null, 201);
     })
     // .openapi(getAllPlansSpec, async (c) => {
     //   // TODO: Implement read all logic
