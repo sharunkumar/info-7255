@@ -25,10 +25,6 @@ export const plan = (client: RedisClient) =>
 
       return c.body(null, 201);
     })
-    // .openapi(getAllPlansSpec, async (c) => {
-    //   // TODO: Implement read all logic
-    //   return c.json({ plans: [] });
-    // })
     .openapi(getPlanByIdSpec, async (c) => {
       const id = c.req.param("id");
       const plan = await getRedisValue(client, `plan--${id}`, PlanSchema);
@@ -37,11 +33,6 @@ export const plan = (client: RedisClient) =>
       }
       return c.json({ plan });
     })
-    // .openapi(updatePlanByIdSpec, async (c) => {
-    //   const id = c.req.param("id");
-    //   // TODO: Implement update logic
-    //   return c.json({ message: "Plan updated successfully" });
-    // })
     .openapi(deletePlanByIdSpec, async (c) => {
       const id = c.req.param("id");
       const plan = await getRedisValue(client, `plan--${id}`, PlanSchema);
