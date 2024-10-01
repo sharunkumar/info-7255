@@ -19,7 +19,7 @@ app.use(auth(prismaClient));
 
 app.route("/user", user);
 
-app.use(etag());
+app.use(etag({ weak: true }));
 
 app.route("/plan", plan(redisClient));
 

@@ -1,0 +1,15 @@
+meta {
+  name: Get By ID - If-None-Match
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:3000/plan/12xvxc345ssdsds-508
+  body: none
+  auth: inherit
+}
+
+headers {
+  If-None-Match: W/"46d973907d6c35a27c323deb7a4d93039d512b85"
+}
