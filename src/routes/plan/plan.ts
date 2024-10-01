@@ -44,6 +44,10 @@ export const plan = (client: RedisClient) =>
     // })
     .openapi(deletePlanByIdSpec, async (c) => {
       const id = c.req.param("id");
+      const plan = await getRedisValue(client, `plan--${id}`, PlanSchema);
+      if (plan == null) {
+        return c.json({ error: "Plan does not exist" }, 404);
+      }
       await client.del(`plan--${id}`);
       return c.body(null, 204);
     });
