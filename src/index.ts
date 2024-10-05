@@ -21,7 +21,7 @@ app.route("/user", user);
 
 app.use(etag({ weak: true }));
 
-app.route("/plan", plan(redisClient));
+app.route("/v1/plan", plan(redisClient));
 
 app.get("/ui", swaggerUI({ url: "swagger.json" }));
 
