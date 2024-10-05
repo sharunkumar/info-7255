@@ -7,7 +7,8 @@
     "dev:studio": "prisma studio --browser none",
     "dev:redis": "docker run --rm --name redis-local -p 6379:6379 -i redis/redis-stack-server:latest",
     "db:push": "prisma db push",
-    "schema:generate": "prisma generate",
+    "schema:generate": "bun run src/scripts/generate-schema.ts",
+    "prisma:generate": "prisma generate",
     "build": "bun build --compile src/index.ts --outfile dist/api"
   },
   "dependencies": {

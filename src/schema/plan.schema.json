@@ -1,0 +1,120 @@
+{
+  "$ref": "#/definitions/PlanSchema",
+  "definitions": {
+    "PlanSchema": {
+      "type": "object",
+      "properties": {
+        "planCostShares": {
+          "type": "object",
+          "properties": {
+            "deductible": {
+              "type": "number"
+            },
+            "_org": {
+              "type": "string"
+            },
+            "copay": {
+              "type": "number"
+            },
+            "objectId": {
+              "type": "string"
+            },
+            "objectType": {
+              "type": "string",
+              "const": "membercostshare"
+            }
+          },
+          "required": [
+            "deductible",
+            "_org",
+            "copay",
+            "objectId",
+            "objectType"
+          ],
+          "additionalProperties": false
+        },
+        "linkedPlanServices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "linkedService": {
+                "type": "object",
+                "properties": {
+                  "_org": {
+                    "type": "string"
+                  },
+                  "objectId": {
+                    "type": "string"
+                  },
+                  "objectType": {
+                    "type": "string",
+                    "const": "service"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "_org",
+                  "objectId",
+                  "objectType",
+                  "name"
+                ],
+                "additionalProperties": false
+              },
+              "planserviceCostShares": {
+                "$ref": "#/definitions/PlanSchema/properties/planCostShares"
+              },
+              "_org": {
+                "type": "string"
+              },
+              "objectId": {
+                "type": "string"
+              },
+              "objectType": {
+                "type": "string",
+                "const": "planservice"
+              }
+            },
+            "required": [
+              "linkedService",
+              "planserviceCostShares",
+              "_org",
+              "objectId",
+              "objectType"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "_org": {
+          "type": "string"
+        },
+        "objectId": {
+          "type": "string"
+        },
+        "objectType": {
+          "type": "string",
+          "const": "plan"
+        },
+        "planType": {
+          "type": "string"
+        },
+        "creationDate": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "planCostShares",
+        "linkedPlanServices",
+        "_org",
+        "objectId",
+        "objectType",
+        "planType",
+        "creationDate"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
