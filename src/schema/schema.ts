@@ -2,9 +2,9 @@ import { z } from "zod";
 
 // MemberCostShare schema
 const MemberCostShareSchema = z.object({
-  deductible: z.number(),
+  deductible: z.number().nonnegative(),
   _org: z.string(),
-  copay: z.number(),
+  copay: z.number().nonnegative(),
   objectId: z.string(),
   objectType: z.literal("membercostshare"),
 });
