@@ -1,8 +1,25 @@
 auth {
-  mode: basic
+  mode: oauth2
 }
 
-auth:basic {
-  username: admin@example.com
-  password: password
+auth:oauth2 {
+  grant_type: authorization_code
+  callback_url: http://localhost:3000/v1/google
+  authorization_url: https://accounts.google.com/o/oauth2/v2/auth
+  access_token_url: https://oauth2.googleapis.com/token
+  client_id: {{GOOGLE_CLIENT_ID}}
+  client_secret: {{GOOGLE_CLIENT_SECRET}}
+  scope: profile
+  state: 
+  pkce: false
+}
+
+script:pre-request {
+  req.setMaxRedirects(5);
+}
+
+script:post-response {
+  if(req.getAuthMode() == 'oauth2' && res.body.access_token) {
+      bru.setVar('GOOGLE_ACCESS_TOKEN', res.body.access_token);
+  }
 }
