@@ -6,6 +6,9 @@
     "dev:server": "bun run --hot src/index.ts",
     "dev:redis": "docker run --rm --name redis-local -p 6379:6379 -i redis/redis-stack-server:latest",
     "schema:generate": "bun run src/scripts/generate-schema.ts",
+    "format:write": "biome format --write src",
+    "lint:write": "biome lint --write src",
+    "lint": "biome lint src",
     "build": "bun build --compile src/index.ts --outfile dist/api"
   },
   "dependencies": {
@@ -19,6 +22,7 @@
     "zod_utilz": "^0.8.3"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.3",
     "@types/bun": "^1.1.11",
     "concurrently": "^9.0.1"
   }
