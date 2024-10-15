@@ -5,6 +5,7 @@ import { etag } from 'hono/etag';
 import { logger } from 'hono/logger';
 import nullthrows from 'nullthrows';
 import { getRedisClient } from './functions/get-redis-client';
+import { googleTokenVerifier } from './middleware/google-token-checker';
 import { plan } from './routes/plan/plan';
 
 const app = new OpenAPIHono();
@@ -35,6 +36,8 @@ app.get(GOOGLE_CALLBACK_URL, async (c) => {
 	const response = { token, grantedScopes, user };
 	return c.json(response);
 });
+
+app.use(googleTokenVerifier);
 
 app.use(etag({ weak: true }));
 

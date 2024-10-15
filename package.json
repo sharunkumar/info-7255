@@ -16,6 +16,7 @@
     "@hono/swagger-ui": "^0.4.1",
     "@hono/zod-openapi": "^0.16.4",
     "@hono/zod-validator": "^0.4.1",
+    "google-auth-library": "^9.14.2",
     "hono": "^4.6.4",
     "nullthrows": "^1.1.1",
     "redis": "^4.7.0",
