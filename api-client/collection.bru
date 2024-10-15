@@ -1,17 +1,9 @@
 auth {
-  mode: oauth2
+  mode: bearer
 }
 
-auth:oauth2 {
-  grant_type: authorization_code
-  callback_url: http://localhost:3000/v1/google
-  authorization_url: https://accounts.google.com/o/oauth2/v2/auth
-  access_token_url: https://oauth2.googleapis.com/token
-  client_id: {{GOOGLE_CLIENT_ID}}
-  client_secret: {{GOOGLE_CLIENT_SECRET}}
-  scope: profile
-  state: 
-  pkce: false
+auth:bearer {
+  token: {{TOKEN}}
 }
 
 script:pre-request {
