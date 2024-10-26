@@ -17,16 +17,16 @@
     "@hono/zod-openapi": "^0.16.4",
     "@hono/zod-validator": "^0.4.1",
     "google-auth-library": "^9.14.2",
-    "hono": "^4.6.5",
+    "hono": "^4.6.7",
     "nullthrows": "^1.1.1",
     "redis": "^4.7.0",
     "zod": "^3.23.8",
-    "zod-to-json-schema": "^3.23.3",
+    "zod-to-json-schema": "^3.23.5",
     "zod_utilz": "^0.8.3"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@types/bun": "^1.1.11",
+    "@types/bun": "^1.1.12",
     "concurrently": "^9.0.1"
   }
 }
