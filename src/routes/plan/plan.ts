@@ -22,13 +22,14 @@ export const plan = (client: RedisClient) =>
 			if (!planJson) {
 				return c.body(null, 404);
 			}
-			try {
-				const plan = PlanSchema.parse(JSON.parse(planJson));
-				return c.json({ plan });
-			} catch (error) {
-				console.error('Error parsing plan data:', error);
-				return c.json({ error: 'Invalid plan data' }, 500);
+			const { success, data, error } = PlanSchema.safeParse(
+				JSON.parse(planJson),
+			);
+			if (success) {
+				return c.json({ plan: data });
 			}
+			console.error('Error parsing plan data:', error);
+			return c.json({ error: 'Invalid plan data in Redis.' }, 500);
 		})
 		.openapi(deletePlanByIdSpec, async (c) => {
 			const id = c.req.param('id');
