@@ -19,7 +19,7 @@ export const plan = (client: RedisClient) =>
 
 			await client.hSet('plan', plan.objectId, JSON.stringify(plan));
 
-			return c.json(plan, 201);
+			return c.json({ plan }, 201);
 		})
 		.openapi(getPlanByIdSpec, async (c) => {
 			const id = c.req.param('id');
