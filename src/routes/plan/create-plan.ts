@@ -16,5 +16,8 @@ export const createPlanSpec = createRoute({
 		201: {
 			description: 'Plan created successfully',
 		},
+		409: {
+			description: 'Plan already exists',
+		},
 	},
 });
