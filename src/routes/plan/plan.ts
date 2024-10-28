@@ -10,15 +10,10 @@ export const plan = (client: RedisClient) =>
 	new OpenAPIHono()
 		.openapi(createPlanSpec, async (c) => {
 			const plan = c.req.valid('json');
-
-			const existingPlan = await client.hGet('plan', plan.objectId);
-
-			if (existingPlan) {
+			if (await client.hGet('plan', plan.objectId)) {
 				return c.json({ error: 'Plan already exists' }, 409);
 			}
-
 			await client.hSet('plan', plan.objectId, JSON.stringify(plan));
-
 			return c.json({ plan }, 201);
 		})
 		.openapi(getPlanByIdSpec, async (c) => {
