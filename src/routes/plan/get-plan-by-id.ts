@@ -1,5 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { PlanSchema } from '../../schema/schema';
+import { GetPlanSchema, PlanSchema } from '../../schema/schema';
 export const getPlanByIdSpec = createRoute({
 	method: 'get',
 	path: '/{id}',
@@ -13,9 +13,7 @@ export const getPlanByIdSpec = createRoute({
 			description: 'Specific plan',
 			content: {
 				'application/json': {
-					schema: z.object({
-						plan: PlanSchema,
-					}),
+					schema: GetPlanSchema,
 				},
 			},
 		},

@@ -37,4 +37,17 @@ const PlanSchema = z.object({
 	creationDate: z.string(),
 });
 
-export { MemberCostShareSchema, PlanSchema, PlanServiceSchema, ServiceSchema };
+type Plan = z.infer<typeof PlanSchema>;
+
+const GetPlanSchema = z.object({
+	plan: PlanSchema,
+});
+
+export {
+	MemberCostShareSchema,
+	PlanSchema,
+	PlanServiceSchema,
+	ServiceSchema,
+	GetPlanSchema,
+	type Plan,
+};

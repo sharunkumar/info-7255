@@ -1,16 +1,15 @@
 import { expect, it } from 'bun:test';
 import { testClient } from 'hono/testing';
 import { getRedisClient } from '../../functions/get-redis-client';
+import { GetPlanSchema, type Plan } from '../../schema/schema';
 import { plan } from './plan';
-import type { z } from 'zod';
-import type { PlanSchema } from '../../schema/schema';
 
 const redisClient = await getRedisClient();
 const planTestClient = testClient(plan(redisClient));
 
 await redisClient.flushAll();
 
-const createPayload: z.infer<typeof PlanSchema> = {
+const createPayload: Plan = {
 	planCostShares: {
 		deductible: 2000,
 		_org: 'example.com',
@@ -64,15 +63,20 @@ const createPayload: z.infer<typeof PlanSchema> = {
 };
 
 it('end-to-end plan testing', async () => {
-	let res = await planTestClient.index.$post({
+	const createResponse = await planTestClient.index.$post({
 		json: createPayload,
 	});
+	expect(createResponse.status).toEqual(201);
 
-	expect(res.status).toEqual(201);
-
-	res = await planTestClient.index.$post({
-		json: createPayload,
+	const res2 = await planTestClient[':id'].$get({
+		param: {
+			id: createPayload.objectId,
+		},
 	});
+	expect(res2.status).toEqual(200);
 
-	expect(res.status).toEqual(409);
+	const { success, data, error } = GetPlanSchema.safeParse(await res2.json());
+	console.error(error);
+	expect(success).toBeTruthy();
+	expect(data?.plan).toEqual(createPayload);
 });
