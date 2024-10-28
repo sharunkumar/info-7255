@@ -15,7 +15,6 @@ export const google_token_checker = bearerAuth({
 				idToken: token,
 				audience: clientId,
 			});
-			console.log({ tokenInfo });
 			return tokenInfo != null;
 		} catch (error) {
 			console.error(error);
