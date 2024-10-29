@@ -5,6 +5,7 @@ import { createPlanSpec } from './create-plan';
 import { deletePlanByIdSpec } from './delete-plan-by-id';
 import { getAllPlansSpec } from './get-all-plans';
 import { getPlanByIdSpec } from './get-plan-by-id';
+import { patchPlanByIdSpec } from './patch-plan-by-id';
 
 export const plan = (client: RedisClient) =>
 	new OpenAPIHono()
@@ -46,4 +47,19 @@ export const plan = (client: RedisClient) =>
 				return JSON.parse(planJson);
 			});
 			return c.json({ plans: plans ?? [] });
+		})
+		.openapi(patchPlanByIdSpec, async (c) => {
+			const id = c.req.param('id');
+			const updates = c.req.valid('json');
+
+			const existingPlanJson = await client.hGet('plan', id);
+			if (!existingPlanJson) {
+				return c.json({ error: 'Plan not found' }, 404);
+			}
+
+			const existingPlan = JSON.parse(existingPlanJson);
+			const updatedPlan = { ...existingPlan, ...updates };
+
+			await client.hSet('plan', id, JSON.stringify(updatedPlan));
+			return c.json({ plan: updatedPlan });
 		});

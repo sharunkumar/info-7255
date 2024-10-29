@@ -37,6 +37,17 @@ const PlanSchema = z.object({
 	creationDate: z.string(),
 });
 
+// Patch Plan schema
+const PatchPlanSchema = z.object({
+	planCostShares: MemberCostShareSchema.optional(),
+	linkedPlanServices: z.array(PlanServiceSchema).optional(),
+	_org: z.string().optional(),
+	objectId: z.string().optional(),
+	objectType: z.literal('plan').optional(),
+	planType: z.string().optional(),
+	creationDate: z.string().optional(),
+});
+
 type Plan = z.infer<typeof PlanSchema>;
 
 const GetPlanSchema = z.object({
@@ -49,5 +60,6 @@ export {
 	PlanServiceSchema,
 	ServiceSchema,
 	GetPlanSchema,
+	PatchPlanSchema,
 	type Plan,
 };
