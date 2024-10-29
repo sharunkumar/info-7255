@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test';
-import { hash, verify } from './crypto';
+import { hash, verify } from '../functions/crypto';
 
 describe('Crypto functions', () => {
 	const testPassword = 'mySecurePassword123';
