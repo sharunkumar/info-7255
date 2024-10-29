@@ -13,8 +13,6 @@ import {
 const redisClient = await getRedisClient();
 const planTestClient = testClient(plan(redisClient));
 
-await redisClient.flushAll();
-
 describe('plan', () => {
 	it('create', async () => {
 		const payload = getCreatePlanPayload();
@@ -71,5 +69,10 @@ describe('plan', () => {
 		);
 		expect(success).toBeTruthy();
 		expect(data?.plan).toEqual(finalPatchedPlanResponse);
+
+		const deleteResponse = await planTestClient[':id'].$delete({
+			param: { id: payload.objectId },
+		});
+		expect(deleteResponse.status).toEqual(204);
 	});
 });
