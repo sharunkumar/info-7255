@@ -1,4 +1,4 @@
-import { expect, it } from 'bun:test';
+import { describe, expect, it } from 'bun:test';
 import { testClient } from 'hono/testing';
 import { getRedisClient } from '../../functions/get-redis-client';
 import { GetPlanSchema, type Plan } from '../../schema/schema';
@@ -9,7 +9,7 @@ const planTestClient = testClient(plan(redisClient));
 
 await redisClient.flushAll();
 
-const createPayload: Plan = {
+const getCreatePlanPayload = (): Plan => ({
 	planCostShares: {
 		deductible: 2000,
 		_org: 'example.com',
@@ -56,27 +56,51 @@ const createPayload: Plan = {
 		},
 	],
 	_org: 'example.com',
-	objectId: '12xvxc345ssdsds-508',
+	objectId: crypto.randomUUID(),
 	objectType: 'plan',
 	planType: 'inNetwork',
 	creationDate: '12-12-2017',
-};
+});
 
-it('end-to-end plan testing', async () => {
-	const createResponse = await planTestClient.index.$post({
-		json: createPayload,
+describe('plan', () => {
+	it('create', async () => {
+		const payload = getCreatePlanPayload();
+		const createResponse = await planTestClient.index.$post({ json: payload });
+		expect(createResponse.status).toEqual(201);
+		const { success, data, error } = GetPlanSchema.safeParse(
+			await createResponse.json(),
+		);
+		expect(success).toBeTruthy();
+		expect(data?.plan).toEqual(payload);
 	});
-	expect(createResponse.status).toEqual(201);
 
-	const res2 = await planTestClient[':id'].$get({
-		param: {
-			id: createPayload.objectId,
-		},
+	it('get by id', async () => {
+		const payload = getCreatePlanPayload();
+		const createResponse = await planTestClient.index.$post({ json: payload });
+		expect(createResponse.status).toEqual(201);
+		const planById = await planTestClient[':id'].$get({
+			param: { id: payload.objectId },
+		});
+		expect(planById.status).toEqual(200);
+		const { success, data, error } = GetPlanSchema.safeParse(
+			await planById.json(),
+		);
+		expect(success).toBeTruthy();
+		expect(data?.plan).toEqual(payload);
 	});
-	expect(res2.status).toEqual(200);
 
-	const { success, data, error } = GetPlanSchema.safeParse(await res2.json());
-	console.error(error);
-	expect(success).toBeTruthy();
-	expect(data?.plan).toEqual(createPayload);
+	it('delete', async () => {
+		const payload = getCreatePlanPayload();
+		const createResponse = await planTestClient.index.$post({ json: payload });
+		expect(createResponse.status).toEqual(201);
+		const { success, data, error } = GetPlanSchema.safeParse(
+			await createResponse.json(),
+		);
+		expect(success).toBeTruthy();
+		expect(data?.plan).toEqual(payload);
+		const deleteResponse = await planTestClient[':id'].$delete({
+			param: { id: payload.objectId },
+		});
+		expect(deleteResponse.status).toEqual(204);
+	});
 });
