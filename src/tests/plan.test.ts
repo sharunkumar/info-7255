@@ -8,7 +8,7 @@ import {
 	patchPlanPayload,
 	createPlanPayloadForPatch,
 	finalPatchedPlanResponse,
-} from './store';
+} from './_store';
 
 const redisClient = await getRedisClient();
 const planTestClient = testClient(plan(redisClient));
