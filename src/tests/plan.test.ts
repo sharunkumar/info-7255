@@ -3,7 +3,12 @@ import { testClient } from 'hono/testing';
 import { getRedisClient } from '../functions/get-redis-client';
 import { GetPlanSchema, type Plan } from '../schema/schema';
 import { plan } from '../routes/plan/plan';
-import { getCreatePlanPayload } from './store';
+import {
+	getCreatePlanPayload,
+	patchPlanPayload,
+	createPlanPayloadForPatch,
+	finalPatchedPlanResponse,
+} from './store';
 
 const redisClient = await getRedisClient();
 const planTestClient = testClient(plan(redisClient));
@@ -50,5 +55,21 @@ describe('plan', () => {
 			param: { id: payload.objectId },
 		});
 		expect(deleteResponse.status).toEqual(204);
+	});
+
+	it('patch', async () => {
+		const payload = createPlanPayloadForPatch;
+		const createResponse = await planTestClient.index.$post({ json: payload });
+		expect(createResponse.status).toEqual(201);
+		const patchResponse = await planTestClient[':id'].$patch({
+			param: { id: payload.objectId },
+			json: patchPlanPayload,
+		});
+		expect(patchResponse.status).toEqual(200);
+		const { success, data, error } = GetPlanSchema.safeParse(
+			await patchResponse.json(),
+		);
+		expect(success).toBeTruthy();
+		expect(data?.plan).toEqual(finalPatchedPlanResponse);
 	});
 });

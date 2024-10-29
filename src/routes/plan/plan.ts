@@ -58,7 +58,18 @@ export const plan = (client: RedisClient) =>
 			}
 
 			const existingPlan = JSON.parse(existingPlanJson);
-			const updatedPlan = { ...existingPlan, ...updates };
+			const updatedPlan = structuredClone(existingPlan);
+			for (const [key, value] of Object.entries(updates)) {
+				if (value !== null && typeof value === 'object') {
+					if (Array.isArray(value)) {
+						updatedPlan[key] = [...(updatedPlan[key] || []), ...value];
+					} else {
+						updatedPlan[key] = { ...(updatedPlan[key] || {}), ...value };
+					}
+				} else {
+					updatedPlan[key] = value;
+				}
+			}
 
 			await client.hSet('plan', id, JSON.stringify(updatedPlan));
 			return c.json({ plan: updatedPlan });

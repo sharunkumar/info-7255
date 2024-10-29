@@ -49,6 +49,7 @@ const PatchPlanSchema = z.object({
 });
 
 type Plan = z.infer<typeof PlanSchema>;
+type PatchPlan = z.infer<typeof PatchPlanSchema>;
 
 const GetPlanSchema = z.object({
 	plan: PlanSchema,
@@ -62,4 +63,5 @@ export {
 	GetPlanSchema,
 	PatchPlanSchema,
 	type Plan,
+	type PatchPlan,
 };
