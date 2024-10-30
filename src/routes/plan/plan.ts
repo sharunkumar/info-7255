@@ -11,21 +11,19 @@ export const plan = (client: RedisClient) =>
 	new OpenAPIHono()
 		.openapi(createPlanSpec, async (c) => {
 			const plan = c.req.valid('json');
-			if (await client.hGet('plan', plan.objectId)) {
+			if (await client.exists(`plan:${plan.objectId}`)) {
 				return c.json({ error: 'Plan already exists' }, 409);
 			}
-			await client.hSet('plan', plan.objectId, JSON.stringify(plan));
+			await client.json.set(`plan:${plan.objectId}`, '$', plan);
 			return c.json({ plan }, 201);
 		})
 		.openapi(getPlanByIdSpec, async (c) => {
 			const id = c.req.param('id');
-			const planJson = await client.hGet('plan', id);
+			const planJson = await client.json.get(`plan:${id}`);
 			if (!planJson) {
 				return c.body(null, 404);
 			}
-			const { success, data, error } = PlanSchema.safeParse(
-				JSON.parse(planJson),
-			);
+			const { success, data, error } = PlanSchema.safeParse(planJson);
 			if (success) {
 				return c.json({ plan: data });
 			}
@@ -34,7 +32,7 @@ export const plan = (client: RedisClient) =>
 		})
 		.openapi(deletePlanByIdSpec, async (c) => {
 			const id = c.req.param('id');
-			const plan = await client.hGet('plan', id);
+			const plan = await client.json.get(`plan:${id}`);
 			if (plan == null) {
 				return c.json({ error: 'Plan does not exist' }, 404);
 			}
@@ -52,25 +50,22 @@ export const plan = (client: RedisClient) =>
 			const id = c.req.param('id');
 			const updates = c.req.valid('json');
 
-			const existingPlanJson = await client.hGet('plan', id);
-			if (!existingPlanJson) {
+			if (!(await client.exists(`plan:${id}`))) {
 				return c.json({ error: 'Plan not found' }, 404);
 			}
 
-			const existingPlan = JSON.parse(existingPlanJson);
-			const updatedPlan = structuredClone(existingPlan);
 			for (const [key, value] of Object.entries(updates)) {
 				if (value !== null && typeof value === 'object') {
 					if (Array.isArray(value)) {
-						updatedPlan[key] = [...(updatedPlan[key] || []), ...value];
+						await client.json.arrAppend(`plan:${id}`, `$.${key}`, ...value);
 					} else {
-						updatedPlan[key] = { ...(updatedPlan[key] || {}), ...value };
+						await client.json.merge(`plan:${id}`, `$.${key}`, value);
 					}
 				} else {
-					updatedPlan[key] = value;
+					await client.json.set(`plan:${id}`, `$.${key}`, value);
 				}
 			}
-
-			await client.hSet('plan', id, JSON.stringify(updatedPlan));
+			const updatedPlan = await client.json.get(`plan:${id}`);
+			await client.json.set(`plan:${id}`, '$', updatedPlan);
 			return c.json({ plan: updatedPlan });
 		});

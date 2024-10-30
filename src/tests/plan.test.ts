@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'bun:test';
+import { afterAll, describe, expect, it } from 'bun:test';
 import { testClient } from 'hono/testing';
 import { getRedisClient } from '../functions/get-redis-client';
-import { GetPlanSchema, type Plan } from '../schema/schema';
+import { GetPlanSchema } from '../schema/schema';
 import { plan } from '../routes/plan/plan';
 import {
 	getCreatePlanPayload,
@@ -12,6 +12,10 @@ import {
 
 const redisClient = await getRedisClient();
 const planTestClient = testClient(plan(redisClient));
+
+afterAll(async () => {
+	await redisClient.flushAll();
+});
 
 describe('plan', () => {
 	it('create', async () => {
