@@ -7,6 +7,7 @@ import { getAllPlansSpec } from './get-all-plans';
 import { getPlanByIdSpec } from './get-plan-by-id';
 import { patchPlanByIdSpec } from './patch-plan-by-id';
 import { deepSavePlan } from '../../functions/deep-save-plan';
+import { deepDeletePlan } from '../../functions/deep-delete-plan';
 
 export const plan = (client: RedisClient) =>
 	new OpenAPIHono()
@@ -39,6 +40,7 @@ export const plan = (client: RedisClient) =>
 				return c.json({ error: 'Plan does not exist' }, 404);
 			}
 			await client.json.del(`plan:${id}`);
+			await deepDeletePlan(PlanSchema.parse(plan), client);
 			return c.body(null, 204);
 		})
 		.openapi(getAllPlansSpec, async (c) => {
@@ -58,10 +60,12 @@ export const plan = (client: RedisClient) =>
 		.openapi(patchPlanByIdSpec, async (c) => {
 			const id = c.req.param('id');
 			const updates = c.req.valid('json');
-
-			if (!(await client.exists(`plan:${id}`))) {
+			const currentPlan = PlanSchema.parse(await client.json.get(`plan:${id}`));
+			if (!currentPlan) {
 				return c.json({ error: 'Plan not found' }, 404);
 			}
+
+			await deepDeletePlan(currentPlan, client);
 
 			for (const [key, value] of Object.entries(updates)) {
 				if (value !== null && typeof value === 'object') {
@@ -76,5 +80,6 @@ export const plan = (client: RedisClient) =>
 			}
 			const updatedPlan = await client.json.get(`plan:${id}`);
 			await client.json.set(`plan:${id}`, '$', updatedPlan);
+			await deepSavePlan(PlanSchema.parse(updatedPlan), client);
 			return c.json({ plan: updatedPlan });
 		});
