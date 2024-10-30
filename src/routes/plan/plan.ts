@@ -40,11 +40,18 @@ export const plan = (client: RedisClient) =>
 			return c.body(null, 204);
 		})
 		.openapi(getAllPlansSpec, async (c) => {
-			const planHash = await client.hGetAll('plan');
-			const plans = Object.values(planHash).map((planJson) => {
-				return JSON.parse(planJson);
-			});
-			return c.json({ plans: plans ?? [] });
+			const planKeys = await client.keys('plan:*');
+			const plans = (
+				await Promise.allSettled(
+					planKeys
+						.flatMap(async (key) => {
+							const planJson = await client.json.get(key);
+							return PlanSchema.parse(planJson);
+						})
+						.filter((plan) => plan != null),
+				)
+			).flatMap((plan) => (plan.status === 'fulfilled' ? plan.value : []));
+			return c.json({ plans });
 		})
 		.openapi(patchPlanByIdSpec, async (c) => {
 			const id = c.req.param('id');

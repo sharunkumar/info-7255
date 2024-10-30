@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
 const ObjectBasicSchema = z.object({
-	_org: z.string(),
-	objectId: z.string(),
 	objectType: z.string(),
+	objectId: z.string(),
+	_org: z.string(),
 });
 
 const MemberCostShareSchema = ObjectBasicSchema.merge(
@@ -63,6 +63,7 @@ export {
 	ServiceSchema,
 	GetPlanSchema,
 	PatchPlanSchema,
+	ObjectBasicSchema,
 	type Plan,
 	type PatchPlan,
 };

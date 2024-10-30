@@ -33,6 +33,17 @@ describe('plan', () => {
 		expect(createResponse2.status).toEqual(409);
 	});
 
+	it('get all', async () => {
+		const payload = getCreatePlanPayload();
+		const createResponse = await planTestClient.index.$post({ json: payload });
+		expect(createResponse.status).toEqual(201);
+
+		const allPlansResponse = await planTestClient.index.$get();
+		expect(allPlansResponse.status).toEqual(200);
+		const allPlans = await allPlansResponse.json();
+		expect(allPlans.plans.length).toBeGreaterThan(0);
+	});
+
 	it('get by id', async () => {
 		const payload = getCreatePlanPayload();
 		const createResponse = await planTestClient.index.$post({ json: payload });
