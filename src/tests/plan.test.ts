@@ -22,6 +22,7 @@ describe('plan', () => {
 		const payload = getCreatePlanPayload();
 		const createResponse = await planTestClient.index.$post({ json: payload });
 		expect(createResponse.status).toEqual(201);
+
 		const { success, data, error } = GetPlanSchema.safeParse(
 			await createResponse.json(),
 		);
@@ -36,10 +37,12 @@ describe('plan', () => {
 		const payload = getCreatePlanPayload();
 		const createResponse = await planTestClient.index.$post({ json: payload });
 		expect(createResponse.status).toEqual(201);
+
 		const planById = await planTestClient[':id'].$get({
 			param: { id: payload.objectId },
 		});
 		expect(planById.status).toEqual(200);
+
 		const { success, data, error } = GetPlanSchema.safeParse(
 			await planById.json(),
 		);
@@ -51,11 +54,13 @@ describe('plan', () => {
 		const payload = getCreatePlanPayload();
 		const createResponse = await planTestClient.index.$post({ json: payload });
 		expect(createResponse.status).toEqual(201);
+
 		const { success, data, error } = GetPlanSchema.safeParse(
 			await createResponse.json(),
 		);
 		expect(success).toBeTruthy();
 		expect(data?.plan).toEqual(payload);
+
 		const deleteResponse = await planTestClient[':id'].$delete({
 			param: { id: payload.objectId },
 		});
@@ -66,11 +71,13 @@ describe('plan', () => {
 		const payload = createPlanPayloadForPatch;
 		const createResponse = await planTestClient.index.$post({ json: payload });
 		expect(createResponse.status).toEqual(201);
+
 		const patchResponse = await planTestClient[':id'].$patch({
 			param: { id: payload.objectId },
 			json: patchPlanPayload,
 		});
 		expect(patchResponse.status).toEqual(200);
+
 		const { success, data, error } = GetPlanSchema.safeParse(
 			await patchResponse.json(),
 		);
