@@ -1,43 +1,44 @@
 import { z } from 'zod';
 
-// MemberCostShare schema
-const MemberCostShareSchema = z.object({
-	deductible: z.number().nonnegative(),
-	_org: z.string(),
-	copay: z.number().nonnegative(),
-	objectId: z.string(),
-	objectType: z.literal('membercostshare'),
-});
-
-// Service schema
-const ServiceSchema = z.object({
+const ObjectBasicSchema = z.object({
 	_org: z.string(),
 	objectId: z.string(),
-	objectType: z.literal('service'),
-	name: z.string(),
+	objectType: z.string(),
 });
 
-// PlanService schema
-const PlanServiceSchema = z.object({
-	linkedService: ServiceSchema,
-	planserviceCostShares: MemberCostShareSchema,
-	_org: z.string(),
-	objectId: z.string(),
-	objectType: z.literal('planservice'),
-});
+const MemberCostShareSchema = ObjectBasicSchema.merge(
+	z.object({
+		deductible: z.number().nonnegative(),
+		copay: z.number().nonnegative(),
+		objectType: z.literal('membercostshare'),
+	}),
+);
 
-// Plan schema
-const PlanSchema = z.object({
-	planCostShares: MemberCostShareSchema,
-	linkedPlanServices: z.array(PlanServiceSchema),
-	_org: z.string(),
-	objectId: z.string(),
-	objectType: z.literal('plan'),
-	planType: z.string(),
-	creationDate: z.string(),
-});
+const ServiceSchema = ObjectBasicSchema.merge(
+	z.object({
+		name: z.string(),
+		objectType: z.literal('service'),
+	}),
+);
 
-// Patch Plan schema
+const PlanServiceSchema = ObjectBasicSchema.merge(
+	z.object({
+		linkedService: ServiceSchema,
+		planserviceCostShares: MemberCostShareSchema,
+		objectType: z.literal('planservice'),
+	}),
+);
+
+const PlanSchema = ObjectBasicSchema.merge(
+	z.object({
+		planCostShares: MemberCostShareSchema,
+		linkedPlanServices: z.array(PlanServiceSchema),
+		planType: z.string(),
+		creationDate: z.string(),
+		objectType: z.literal('plan'),
+	}),
+);
+
 const PatchPlanSchema = z.object({
 	planCostShares: MemberCostShareSchema.optional(),
 	linkedPlanServices: z.array(PlanServiceSchema).optional(),
