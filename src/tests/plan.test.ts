@@ -27,6 +27,9 @@ describe('plan', () => {
 		);
 		expect(success).toBeTruthy();
 		expect(data?.plan).toEqual(payload);
+
+		const createResponse2 = await planTestClient.index.$post({ json: payload });
+		expect(createResponse2.status).toEqual(409);
 	});
 
 	it('get by id', async () => {
