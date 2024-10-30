@@ -11,5 +11,8 @@ export const deletePlanByIdSpec = createRoute({
 		204: {
 			description: 'Plan deleted successfully',
 		},
+		404: {
+			description: 'Plan not found',
+		},
 	},
 });

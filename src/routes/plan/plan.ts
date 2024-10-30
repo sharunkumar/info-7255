@@ -38,7 +38,7 @@ export const plan = (client: RedisClient) =>
 			if (plan == null) {
 				return c.json({ error: 'Plan does not exist' }, 404);
 			}
-			await client.hDel('plan', id);
+			await client.json.del(`plan:${id}`);
 			return c.body(null, 204);
 		})
 		.openapi(getAllPlansSpec, async (c) => {

@@ -76,6 +76,11 @@ describe('plan', () => {
 			param: { id: payload.objectId },
 		});
 		expect(deleteResponse.status).toEqual(204);
+
+		const deleteResponse2 = await planTestClient[':id'].$delete({
+			param: { id: payload.objectId },
+		});
+		expect(deleteResponse2.status).toEqual(404);
 	});
 
 	it('patch', async () => {
