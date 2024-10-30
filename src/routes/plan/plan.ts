@@ -6,6 +6,7 @@ import { deletePlanByIdSpec } from './delete-plan-by-id';
 import { getAllPlansSpec } from './get-all-plans';
 import { getPlanByIdSpec } from './get-plan-by-id';
 import { patchPlanByIdSpec } from './patch-plan-by-id';
+import { deepSavePlan } from '../../functions/deep-save-plan';
 
 export const plan = (client: RedisClient) =>
 	new OpenAPIHono()
@@ -15,6 +16,7 @@ export const plan = (client: RedisClient) =>
 				return c.json({ error: 'Plan already exists' }, 409);
 			}
 			await client.json.set(`plan:${plan.objectId}`, '$', plan);
+			await deepSavePlan(plan, client);
 			return c.json({ plan }, 201);
 		})
 		.openapi(getPlanByIdSpec, async (c) => {
