@@ -17,6 +17,9 @@ export const getPlanByIdSpec = createRoute({
 				},
 			},
 		},
+		304: {
+			description: 'Plan not modified',
+		},
 		404: {
 			description: 'Plan not found',
 		},
