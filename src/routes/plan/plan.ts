@@ -8,6 +8,7 @@ import { getPlanByIdSpec } from './get-plan-by-id';
 import { patchPlanByIdSpec } from './patch-plan-by-id';
 import { deepSavePlan } from '../../functions/deep-save-plan';
 import { deepDeletePlan } from '../../functions/deep-delete-plan';
+import { etag_internal } from '../../functions/crypto';
 
 export const plan = (client: RedisClient) =>
 	new OpenAPIHono()
@@ -63,6 +64,11 @@ export const plan = (client: RedisClient) =>
 			const currentPlan = PlanSchema.parse(await client.json.get(`plan:${id}`));
 			if (!currentPlan) {
 				return c.json({ error: 'Plan not found' }, 404);
+			}
+
+			const ifMatch = c.req.header('If-Match');
+			if (ifMatch && ifMatch !== (await etag_internal(currentPlan, true))) {
+				return c.json({ error: 'Etag mismatch' }, 412);
 			}
 
 			await deepDeletePlan(currentPlan, client);
