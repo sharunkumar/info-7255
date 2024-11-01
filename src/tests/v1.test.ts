@@ -9,6 +9,7 @@ import {
 import nullthrows from 'nullthrows';
 import { getRedisClient } from '../functions/get-redis-client';
 import { etag_internal } from '../functions/crypto';
+import { PlanSchema, PatchPlanSchema } from '../schema/schema';
 
 const v1TestClient = testClient(v1);
 
@@ -60,7 +61,7 @@ describe('v1', () => {
 	});
 
 	it('plan patch: If-Match', async () => {
-		const payload = createPlanPayloadForPatch;
+		const payload = PlanSchema.parse(createPlanPayloadForPatch);
 		const response = await v1TestClient.plan.$post({ json: payload });
 		expect(response.status).toEqual(201);
 		const etag = nullthrows(response.headers.get('ETag'));
@@ -69,13 +70,19 @@ describe('v1', () => {
 		const patchResponsePreconditionFailed = await v1TestClient.plan[
 			':id'
 		].$patch(
-			{ param: { id: payload.objectId }, json: patchPlanPayload },
+			{
+				param: { id: payload.objectId },
+				json: PatchPlanSchema.parse(patchPlanPayload),
+			},
 			{ headers: { 'If-Match': `${etag}-invalid` } },
 		);
 		expect(patchResponsePreconditionFailed.status).toEqual(412);
 
 		const patchResponse = await v1TestClient.plan[':id'].$patch(
-			{ param: { id: payload.objectId }, json: patchPlanPayload },
+			{
+				param: { id: payload.objectId },
+				json: PatchPlanSchema.parse(patchPlanPayload),
+			},
 			{ headers: { 'If-Match': etag } },
 		);
 		expect(patchResponse.status).toEqual(200);
@@ -93,7 +100,10 @@ describe('v1', () => {
 		expect(getEtag).toBeTruthy();
 
 		const patchResponse = await v1TestClient.plan[':id'].$patch(
-			{ param: { id: payload.objectId }, json: patchPlanPayload },
+			{
+				param: { id: payload.objectId },
+				json: PatchPlanSchema.parse(patchPlanPayload),
+			},
 			{ headers: { 'If-Match': getEtag } },
 		);
 		expect(patchResponse.status).toEqual(200);

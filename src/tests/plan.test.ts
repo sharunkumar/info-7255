@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, it } from 'bun:test';
 import { testClient } from 'hono/testing';
 import { getRedisClient } from '../functions/get-redis-client';
-import { PlanSchema } from '../schema/schema';
+import { PatchPlanSchema, PlanSchema } from '../schema/schema';
 import { plan } from '../routes/plan/plan';
 import {
 	getCreatePlanPayload,
@@ -89,13 +89,13 @@ describe('plan', () => {
 	});
 
 	it('patch', async () => {
-		const payload = createPlanPayloadForPatch;
+		const payload = PlanSchema.parse(createPlanPayloadForPatch);
 		const createResponse = await planTestClient.index.$post({ json: payload });
 		expect(createResponse.status).toEqual(201);
 
 		const patchResponse = await planTestClient[':id'].$patch({
 			param: { id: payload.objectId },
-			json: patchPlanPayload,
+			json: PatchPlanSchema.parse(patchPlanPayload),
 		});
 		expect(patchResponse.status).toEqual(200);
 
@@ -103,7 +103,7 @@ describe('plan', () => {
 			await patchResponse.json(),
 		);
 		expect(success).toBeTruthy();
-		expect(data).toEqual(finalPatchedPlanResponse);
+		expect(data).toEqual(PlanSchema.parse(finalPatchedPlanResponse));
 
 		const deleteResponse = await planTestClient[':id'].$delete({
 			param: { id: payload.objectId },
@@ -112,7 +112,7 @@ describe('plan', () => {
 
 		const patchNotFoundResponse = await planTestClient[':id'].$patch({
 			param: { id: payload.objectId },
-			json: patchPlanPayload,
+			json: PatchPlanSchema.parse(patchPlanPayload),
 		});
 		expect(patchNotFoundResponse.status).toEqual(404);
 	});

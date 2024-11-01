@@ -5,6 +5,8 @@
     "jsxImportSource": "hono/jsx",
     "module": "ESNext",
     "target": "ESNext",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
   }
 }
