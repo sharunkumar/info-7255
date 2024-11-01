@@ -59,6 +59,11 @@ describe('plan', () => {
 		);
 		expect(success).toBeTruthy();
 		expect(data).toEqual(payload);
+
+		const planByIdNotFound = await planTestClient[':id'].$get({
+			param: { id: `${payload.objectId}-invalid` },
+		});
+		expect(planByIdNotFound.status).toEqual(404);
 	});
 
 	it('delete', async () => {
