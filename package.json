@@ -10,7 +10,7 @@
     "format:write": "biome format --write src",
     "lint:write": "biome lint --write src",
     "lint": "biome lint src",
-    "test:plan": "concurrently --prefix-colors auto bun:dev:redis 'bun test --watch plan'",
+    "test:api": "concurrently --prefix-colors auto bun:dev:redis 'bun test --watch {plan,v1}'",
     "build": "bun build --compile src/index.ts --outfile dist/api"
   },
   "dependencies": {
