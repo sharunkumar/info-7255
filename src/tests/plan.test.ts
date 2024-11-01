@@ -104,5 +104,11 @@ describe('plan', () => {
 			param: { id: payload.objectId },
 		});
 		expect(deleteResponse.status).toEqual(204);
+
+		const patchNotFoundResponse = await planTestClient[':id'].$patch({
+			param: { id: payload.objectId },
+			json: patchPlanPayload,
+		});
+		expect(patchNotFoundResponse.status).toEqual(404);
 	});
 });

@@ -61,7 +61,7 @@ export const plan = (client: RedisClient) =>
 		.openapi(patchPlanByIdSpec, async (c) => {
 			const id = c.req.param('id');
 			const updates = c.req.valid('json');
-			const currentPlan = PlanSchema.parse(await client.json.get(`plan:${id}`));
+			const currentPlan = await client.json.get(`plan:${id}`);
 			if (!currentPlan) {
 				return c.json({ error: 'Plan not found' }, 404);
 			}
@@ -71,7 +71,7 @@ export const plan = (client: RedisClient) =>
 				return c.json({ error: 'Etag mismatch' }, 412);
 			}
 
-			await deepDeletePlan(currentPlan, client);
+			await deepDeletePlan(PlanSchema.parse(currentPlan), client);
 
 			for (const [key, value] of Object.entries(updates)) {
 				if (value !== null && typeof value === 'object') {
