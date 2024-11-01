@@ -25,6 +25,9 @@ export const patchPlanByIdSpec = createRoute({
 				},
 			},
 		},
+		412: {
+			description: 'ETag mismatch',
+		},
 		404: {
 			description: 'Plan not found',
 		},

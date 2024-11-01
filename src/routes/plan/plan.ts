@@ -8,6 +8,7 @@ import { getPlanByIdSpec } from './get-plan-by-id';
 import { patchPlanByIdSpec } from './patch-plan-by-id';
 import { deepSavePlan } from '../../functions/deep-save-plan';
 import { deepDeletePlan } from '../../functions/deep-delete-plan';
+import { etag_internal } from '../../functions/crypto';
 
 export const plan = (client: RedisClient) =>
 	new OpenAPIHono()
@@ -26,12 +27,7 @@ export const plan = (client: RedisClient) =>
 			if (!planJson) {
 				return c.body(null, 404);
 			}
-			const { success, data, error } = PlanSchema.safeParse(planJson);
-			if (success) {
-				return c.json(data);
-			}
-			console.error('Error parsing plan data:', error);
-			return c.json({ error: 'Invalid plan data in Redis.' }, 500);
+			return c.json(PlanSchema.parse(planJson));
 		})
 		.openapi(deletePlanByIdSpec, async (c) => {
 			const id = c.req.param('id');
@@ -60,12 +56,17 @@ export const plan = (client: RedisClient) =>
 		.openapi(patchPlanByIdSpec, async (c) => {
 			const id = c.req.param('id');
 			const updates = c.req.valid('json');
-			const currentPlan = PlanSchema.parse(await client.json.get(`plan:${id}`));
+			const currentPlan = await client.json.get(`plan:${id}`);
 			if (!currentPlan) {
 				return c.json({ error: 'Plan not found' }, 404);
 			}
 
-			await deepDeletePlan(currentPlan, client);
+			const ifMatch = c.req.header('If-Match');
+			if (ifMatch && ifMatch !== (await etag_internal(currentPlan, true))) {
+				return c.json({ error: 'Etag mismatch' }, 412);
+			}
+
+			await deepDeletePlan(PlanSchema.parse(currentPlan), client);
 
 			for (const [key, value] of Object.entries(updates)) {
 				if (value !== null && typeof value === 'object') {
