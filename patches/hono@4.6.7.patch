@@ -1,0 +1,22 @@
+diff --git a/dist/middleware/etag/index.js b/dist/middleware/etag/index.js
+index cd3bf805097770642e4016e9e669af63e37ae3f3..0c7a55857c3936c915c18323d3db6a83dd71e635 100644
+--- a/dist/middleware/etag/index.js
++++ b/dist/middleware/etag/index.js
+@@ -44,5 +44,6 @@ var etag = (options) => {
+ };
+ export {
+   RETAINED_304_HEADERS,
+-  etag
++  etag,
++  sha1,
+ };
+diff --git a/dist/types/middleware/etag/index.d.ts b/dist/types/middleware/etag/index.d.ts
+index 0a1e171af8c3ee1c3845aba0a1752253b9855038..33db17537128018d48bada898fd11d85a7ffa7f1 100644
+--- a/dist/types/middleware/etag/index.d.ts
++++ b/dist/types/middleware/etag/index.d.ts
+@@ -35,4 +35,5 @@ export declare const RETAINED_304_HEADERS: string[];
+  * ```
+  */
+ export declare const etag: (options?: ETagOptions) => MiddlewareHandler;
++export declare const sha1: (data: any) => Promise<string>
+ export {};
