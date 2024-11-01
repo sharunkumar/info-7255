@@ -52,16 +52,11 @@ const PatchPlanSchema = z.object({
 type Plan = z.infer<typeof PlanSchema>;
 type PatchPlan = z.infer<typeof PatchPlanSchema>;
 
-const GetPlanSchema = z.object({
-	plan: PlanSchema,
-});
-
 export {
 	MemberCostShareSchema,
 	PlanSchema,
 	PlanServiceSchema,
 	ServiceSchema,
-	GetPlanSchema,
 	PatchPlanSchema,
 	ObjectBasicSchema,
 	type Plan,

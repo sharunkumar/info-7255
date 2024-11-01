@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, it } from 'bun:test';
 import { testClient } from 'hono/testing';
 import { getRedisClient } from '../functions/get-redis-client';
-import { GetPlanSchema } from '../schema/schema';
+import { PlanSchema } from '../schema/schema';
 import { plan } from '../routes/plan/plan';
 import {
 	getCreatePlanPayload,
@@ -23,11 +23,11 @@ describe('plan', () => {
 		const createResponse = await planTestClient.index.$post({ json: payload });
 		expect(createResponse.status).toEqual(201);
 
-		const { success, data, error } = GetPlanSchema.safeParse(
+		const { success, data, error } = PlanSchema.safeParse(
 			await createResponse.json(),
 		);
 		expect(success).toBeTruthy();
-		expect(data?.plan).toEqual(payload);
+		expect(data).toEqual(payload);
 
 		const createResponse2 = await planTestClient.index.$post({ json: payload });
 		expect(createResponse2.status).toEqual(409);
@@ -41,7 +41,7 @@ describe('plan', () => {
 		const allPlansResponse = await planTestClient.index.$get();
 		expect(allPlansResponse.status).toEqual(200);
 		const allPlans = await allPlansResponse.json();
-		expect(allPlans.plans.length).toBeGreaterThan(0);
+		expect(allPlans.length).toBeGreaterThan(0);
 	});
 
 	it('get by id', async () => {
@@ -54,11 +54,11 @@ describe('plan', () => {
 		});
 		expect(planById.status).toEqual(200);
 
-		const { success, data, error } = GetPlanSchema.safeParse(
+		const { success, data, error } = PlanSchema.safeParse(
 			await planById.json(),
 		);
 		expect(success).toBeTruthy();
-		expect(data?.plan).toEqual(payload);
+		expect(data).toEqual(payload);
 	});
 
 	it('delete', async () => {
@@ -66,11 +66,11 @@ describe('plan', () => {
 		const createResponse = await planTestClient.index.$post({ json: payload });
 		expect(createResponse.status).toEqual(201);
 
-		const { success, data, error } = GetPlanSchema.safeParse(
+		const { success, data, error } = PlanSchema.safeParse(
 			await createResponse.json(),
 		);
 		expect(success).toBeTruthy();
-		expect(data?.plan).toEqual(payload);
+		expect(data).toEqual(payload);
 
 		const deleteResponse = await planTestClient[':id'].$delete({
 			param: { id: payload.objectId },
@@ -94,11 +94,11 @@ describe('plan', () => {
 		});
 		expect(patchResponse.status).toEqual(200);
 
-		const { success, data, error } = GetPlanSchema.safeParse(
+		const { success, data, error } = PlanSchema.safeParse(
 			await patchResponse.json(),
 		);
 		expect(success).toBeTruthy();
-		expect(data?.plan).toEqual(finalPatchedPlanResponse);
+		expect(data).toEqual(finalPatchedPlanResponse);
 
 		const deleteResponse = await planTestClient[':id'].$delete({
 			param: { id: payload.objectId },

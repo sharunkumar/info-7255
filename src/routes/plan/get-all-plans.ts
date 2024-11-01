@@ -9,9 +9,7 @@ export const getAllPlansSpec = createRoute({
 			description: 'List of plans',
 			content: {
 				'application/json': {
-					schema: z.object({
-						plans: z.array(PlanSchema),
-					}),
+					schema: z.array(PlanSchema),
 				},
 			},
 		},

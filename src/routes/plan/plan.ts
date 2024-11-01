@@ -18,7 +18,7 @@ export const plan = (client: RedisClient) =>
 			}
 			await client.json.set(`plan:${plan.objectId}`, '$', plan);
 			await deepSavePlan(plan, client);
-			return c.json({ plan }, 201);
+			return c.json(plan, 201);
 		})
 		.openapi(getPlanByIdSpec, async (c) => {
 			const id = c.req.param('id');
@@ -28,7 +28,7 @@ export const plan = (client: RedisClient) =>
 			}
 			const { success, data, error } = PlanSchema.safeParse(planJson);
 			if (success) {
-				return c.json({ plan: data });
+				return c.json(data);
 			}
 			console.error('Error parsing plan data:', error);
 			return c.json({ error: 'Invalid plan data in Redis.' }, 500);
@@ -55,7 +55,7 @@ export const plan = (client: RedisClient) =>
 						.filter((plan) => plan != null),
 				)
 			).flatMap((plan) => (plan.status === 'fulfilled' ? plan.value : []));
-			return c.json({ plans });
+			return c.json(plans);
 		})
 		.openapi(patchPlanByIdSpec, async (c) => {
 			const id = c.req.param('id');
@@ -81,5 +81,5 @@ export const plan = (client: RedisClient) =>
 			const updatedPlan = await client.json.get(`plan:${id}`);
 			await client.json.set(`plan:${id}`, '$', updatedPlan);
 			await deepSavePlan(PlanSchema.parse(updatedPlan), client);
-			return c.json({ plan: updatedPlan });
+			return c.json(PlanSchema.parse(updatedPlan));
 		});
