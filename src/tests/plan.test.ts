@@ -1,14 +1,9 @@
 import { afterAll, describe, expect, it } from 'bun:test';
 import { testClient } from 'hono/testing';
 import { getRedisClient } from '../functions/get-redis-client';
-import { PatchPlanSchema, PlanSchema } from '../schema/schema';
 import { plan } from '../routes/plan/plan';
-import {
-	getCreatePlanPayload,
-	patchPlanPayload,
-	createPlanPayloadForPatch,
-	finalPatchedPlanResponse,
-} from './_store';
+import { PlanSchema } from '../schema/schema';
+import { getCreatePlanPayload } from './_store';
 
 const redisClient = await getRedisClient();
 const planTestClient = testClient(plan(redisClient));

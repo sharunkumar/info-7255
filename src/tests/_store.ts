@@ -1,7 +1,7 @@
-import type { Plan } from '../schema/schema';
-export { default as createPlanPayloadForPatch } from '../schema/samples/plan.patch.1.create.sample.json';
-export { default as patchPlanPayload } from '../schema/samples/plan.patch.2.sample.json';
-export { default as finalPatchedPlanResponse } from '../schema/samples/plan.patch.3.get.sample.json';
+import { PatchPlanSchema, type PatchPlan, type Plan } from '../schema/schema';
+import { default as createPlanPayloadForPatch } from '../schema/samples/plan.patch.1.create.sample.json';
+import { default as patchPlanPayload } from '../schema/samples/plan.patch.2.sample.json';
+import { default as finalPatchedPlanResponse } from '../schema/samples/plan.patch.3.get.sample.json';
 
 export const getCreatePlanPayload = (): Plan => ({
 	planCostShares: {
@@ -55,3 +55,16 @@ export const getCreatePlanPayload = (): Plan => ({
 	planType: 'inNetwork',
 	creationDate: '12-12-2017',
 });
+
+export const getPatchPlanPayload = (createPayload: Plan): PatchPlan => {
+	return {
+		...PatchPlanSchema.parse(patchPlanPayload),
+		objectId: createPayload.objectId,
+	};
+};
+
+export {
+	createPlanPayloadForPatch,
+	patchPlanPayload,
+	finalPatchedPlanResponse,
+};
