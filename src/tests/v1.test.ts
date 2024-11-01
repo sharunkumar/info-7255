@@ -28,6 +28,23 @@ describe('v1', () => {
 		expect(internalHash).toEqual(etag);
 	});
 
+	it('plan create: etag should match get etag', async () => {
+		const payload = getCreatePlanPayload();
+		const response = await v1TestClient.plan.$post({ json: payload });
+		expect(response.status).toEqual(201);
+
+		const etag = nullthrows(response.headers.get('ETag'));
+		expect(etag).toBeTruthy();
+
+		const getResponse = await v1TestClient.plan[':id'].$get({
+			param: { id: payload.objectId },
+		});
+		expect(getResponse.status).toEqual(200);
+		const getEtag = nullthrows(getResponse.headers.get('ETag'));
+		expect(getEtag).toBeTruthy();
+		expect(getEtag).toEqual(etag);
+	});
+
 	it('plan get: If-None-Match', async () => {
 		const payload = getCreatePlanPayload();
 		const response = await v1TestClient.plan.$post({ json: payload });
@@ -60,6 +77,24 @@ describe('v1', () => {
 		const patchResponse = await v1TestClient.plan[':id'].$patch(
 			{ param: { id: payload.objectId }, json: patchPlanPayload },
 			{ headers: { 'If-Match': etag } },
+		);
+		expect(patchResponse.status).toEqual(200);
+	});
+
+	it('plan patch: If-Match with GET etag', async () => {
+		const payload = getCreatePlanPayload();
+		const response = await v1TestClient.plan.$post({ json: payload });
+		expect(response.status).toEqual(201);
+		const getResponse = await v1TestClient.plan[':id'].$get({
+			param: { id: payload.objectId },
+		});
+		expect(getResponse.status).toEqual(200);
+		const getEtag = nullthrows(getResponse.headers.get('ETag'));
+		expect(getEtag).toBeTruthy();
+
+		const patchResponse = await v1TestClient.plan[':id'].$patch(
+			{ param: { id: payload.objectId }, json: patchPlanPayload },
+			{ headers: { 'If-Match': getEtag } },
 		);
 		expect(patchResponse.status).toEqual(200);
 	});
