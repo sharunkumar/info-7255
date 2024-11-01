@@ -5,6 +5,7 @@ import {
 	getCreatePlanPayload,
 	createPlanPayloadForPatch,
 	patchPlanPayload,
+	finalPatchedPlanResponse,
 } from './_store';
 import nullthrows from 'nullthrows';
 import { getRedisClient } from '../functions/get-redis-client';
@@ -60,23 +61,40 @@ describe('v1', () => {
 		expect(getResponse.status).toEqual(304);
 	});
 
-	it('plan patch: If-Match', async () => {
-		const payload = PlanSchema.parse(createPlanPayloadForPatch);
-		const response = await v1TestClient.plan.$post({ json: payload });
-		expect(response.status).toEqual(201);
-		const etag = nullthrows(response.headers.get('ETag'));
-		expect(etag).toBeTruthy();
+	it('plan patch: ETag Required', async () => {
+		const payload = getCreatePlanPayload();
+		const createResponse = await v1TestClient.plan.$post({ json: payload });
+		expect(createResponse.status).toEqual(201);
 
-		const patchResponsePreconditionFailed = await v1TestClient.plan[
-			':id'
-		].$patch(
+		const patchResponse = await v1TestClient.plan[':id'].$patch({
+			param: { id: payload.objectId },
+			json: PatchPlanSchema.parse(patchPlanPayload),
+		});
+		expect(patchResponse.status).toEqual(412);
+	});
+
+	it('plan patch: Invalid ETag', async () => {
+		const payload = getCreatePlanPayload();
+		const createResponse = await v1TestClient.plan.$post({ json: payload });
+		expect(createResponse.status).toEqual(201);
+
+		const patchResponseInvalidEtag = await v1TestClient.plan[':id'].$patch(
 			{
 				param: { id: payload.objectId },
 				json: PatchPlanSchema.parse(patchPlanPayload),
 			},
-			{ headers: { 'If-Match': `${etag}-invalid` } },
+			{ headers: { 'If-Match': 'invalid' } },
 		);
-		expect(patchResponsePreconditionFailed.status).toEqual(412);
+		expect(patchResponseInvalidEtag.status).toEqual(412);
+	});
+
+	it('plan patch: If-Match', async () => {
+		const payload = PlanSchema.parse(createPlanPayloadForPatch);
+		const createResponse = await v1TestClient.plan.$post({ json: payload });
+		expect(createResponse.status).toEqual(201);
+
+		const etag = nullthrows(createResponse.headers.get('ETag'));
+		expect(etag).toBeTruthy();
 
 		const patchResponse = await v1TestClient.plan[':id'].$patch(
 			{
@@ -86,6 +104,26 @@ describe('v1', () => {
 			{ headers: { 'If-Match': etag } },
 		);
 		expect(patchResponse.status).toEqual(200);
+
+		const { success, data, error } = PlanSchema.safeParse(
+			await patchResponse.json(),
+		);
+		expect(success).toBeTruthy();
+		expect(data).toEqual(PlanSchema.parse(finalPatchedPlanResponse));
+
+		const deleteResponse = await v1TestClient.plan[':id'].$delete({
+			param: { id: payload.objectId },
+		});
+		expect(deleteResponse.status).toEqual(204);
+
+		const patchNotFoundResponse = await v1TestClient.plan[':id'].$patch(
+			{
+				param: { id: payload.objectId },
+				json: PatchPlanSchema.parse(patchPlanPayload),
+			},
+			{ headers: { 'If-Match': etag } },
+		);
+		expect(patchNotFoundResponse.status).toEqual(404);
 	});
 
 	it('plan patch: If-Match with GET etag', async () => {

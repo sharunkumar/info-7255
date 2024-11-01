@@ -54,6 +54,10 @@ export const plan = (client: RedisClient) =>
 			return c.json(plans);
 		})
 		.openapi(patchPlanByIdSpec, async (c) => {
+			const etag = c.req.header('If-Match');
+			if (etag == null) {
+				return c.json({ error: 'Etag required' }, 412);
+			}
 			const id = c.req.param('id');
 			const updates = c.req.valid('json');
 			const currentPlan = await client.json.get(`plan:${id}`);

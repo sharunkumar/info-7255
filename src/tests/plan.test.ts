@@ -87,33 +87,4 @@ describe('plan', () => {
 		});
 		expect(deleteResponse2.status).toEqual(404);
 	});
-
-	it('patch', async () => {
-		const payload = PlanSchema.parse(createPlanPayloadForPatch);
-		const createResponse = await planTestClient.index.$post({ json: payload });
-		expect(createResponse.status).toEqual(201);
-
-		const patchResponse = await planTestClient[':id'].$patch({
-			param: { id: payload.objectId },
-			json: PatchPlanSchema.parse(patchPlanPayload),
-		});
-		expect(patchResponse.status).toEqual(200);
-
-		const { success, data, error } = PlanSchema.safeParse(
-			await patchResponse.json(),
-		);
-		expect(success).toBeTruthy();
-		expect(data).toEqual(PlanSchema.parse(finalPatchedPlanResponse));
-
-		const deleteResponse = await planTestClient[':id'].$delete({
-			param: { id: payload.objectId },
-		});
-		expect(deleteResponse.status).toEqual(204);
-
-		const patchNotFoundResponse = await planTestClient[':id'].$patch({
-			param: { id: payload.objectId },
-			json: PatchPlanSchema.parse(patchPlanPayload),
-		});
-		expect(patchNotFoundResponse.status).toEqual(404);
-	});
 });
