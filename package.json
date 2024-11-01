@@ -24,8 +24,7 @@
     "nullthrows": "^1.1.1",
     "redis": "^4.7.0",
     "zod": "^3.23.8",
-    "zod-to-json-schema": "^3.23.5",
-    "zod_utilz": "^0.8.3"
+    "zod-to-json-schema": "^3.23.5"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
