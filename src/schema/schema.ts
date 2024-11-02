@@ -37,17 +37,19 @@ const PlanSchema = ObjectBasicSchema.merge(
 		creationDate: z.string(),
 		objectType: z.literal('plan'),
 	}),
-);
+).strict();
 
-const PatchPlanSchema = z.object({
-	planCostShares: MemberCostShareSchema.optional(),
-	linkedPlanServices: z.array(PlanServiceSchema).optional(),
-	_org: z.string().optional(),
-	objectId: z.string().optional(),
-	objectType: z.literal('plan').optional(),
-	planType: z.string().optional(),
-	creationDate: z.string().optional(),
-});
+const PatchPlanSchema = z
+	.object({
+		planCostShares: MemberCostShareSchema.optional(),
+		linkedPlanServices: z.array(PlanServiceSchema).optional(),
+		_org: z.string().optional(),
+		objectId: z.string().optional(),
+		objectType: z.literal('plan').optional(),
+		planType: z.string().optional(),
+		creationDate: z.string().optional(),
+	})
+	.strict();
 
 type Plan = z.infer<typeof PlanSchema>;
 type PatchPlan = z.infer<typeof PatchPlanSchema>;
