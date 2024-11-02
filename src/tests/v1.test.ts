@@ -4,7 +4,7 @@ import nullthrows from 'nullthrows';
 import { etag_internal } from '../functions/crypto';
 import { getRedisClient } from '../functions/get-redis-client';
 import { v1 } from '../routes/v1';
-import { PatchPlanSchema, PlanSchema } from '../schema/schema';
+import { PlanSchema } from '../schema/schema';
 import {
 	createPlanPayloadForPatch,
 	finalPatchedPlanResponse,
@@ -12,7 +12,6 @@ import {
 	getPatchPlanPayload,
 	patchPlanPayload,
 } from './_store';
-import { object } from 'zod';
 
 const v1TestClient = testClient(v1);
 
@@ -70,7 +69,7 @@ describe('v1', () => {
 
 		const patchResponse = await v1TestClient.plan[':id'].$patch({
 			param: { id: payload.objectId },
-			json: PatchPlanSchema.parse(patchPlanPayload),
+			json: patchPlanPayload,
 		});
 		expect(patchResponse.status).toEqual(412);
 	});
@@ -99,7 +98,7 @@ describe('v1', () => {
 		expect(etag).toBeTruthy();
 
 		const json = {
-			...PatchPlanSchema.parse(patchPlanPayload),
+			...patchPlanPayload,
 			objectId: 'new-id',
 		};
 		const patchResponse = await v1TestClient.plan[':id'].$patch(
@@ -110,7 +109,7 @@ describe('v1', () => {
 	});
 
 	it('plan patch: If-Match', async () => {
-		const payload = PlanSchema.parse(createPlanPayloadForPatch);
+		const payload = createPlanPayloadForPatch;
 		const createResponse = await v1TestClient.plan.$post({ json: payload });
 		expect(createResponse.status).toEqual(201);
 
@@ -120,7 +119,7 @@ describe('v1', () => {
 		const patchResponse = await v1TestClient.plan[':id'].$patch(
 			{
 				param: { id: payload.objectId },
-				json: PatchPlanSchema.parse(patchPlanPayload),
+				json: patchPlanPayload,
 			},
 			{ headers: { 'If-Match': etag } },
 		);
@@ -130,7 +129,7 @@ describe('v1', () => {
 			await patchResponse.json(),
 		);
 		expect(success).toBeTruthy();
-		expect(data).toEqual(PlanSchema.parse(finalPatchedPlanResponse));
+		expect(data).toEqual(finalPatchedPlanResponse);
 
 		const deleteResponse = await v1TestClient.plan[':id'].$delete({
 			param: { id: payload.objectId },
@@ -140,7 +139,7 @@ describe('v1', () => {
 		const patchNotFoundResponse = await v1TestClient.plan[':id'].$patch(
 			{
 				param: { id: payload.objectId },
-				json: PatchPlanSchema.parse(patchPlanPayload),
+				json: patchPlanPayload,
 			},
 			{ headers: { 'If-Match': etag } },
 		);
