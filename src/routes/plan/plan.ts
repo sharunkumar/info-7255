@@ -55,9 +55,7 @@ export const plan = (client: RedisClient) =>
 		})
 		.openapi(patchPlanByIdSpec, async (c) => {
 			const ifMatch = c.req.header('If-Match');
-			if (ifMatch == null) {
-				return c.json({ error: 'Etag required' }, 412);
-			}
+			const ifNoneMatch = c.req.header('If-None-Match');
 			const id = c.req.param('id');
 			const updates = c.req.valid('json');
 
@@ -68,6 +66,14 @@ export const plan = (client: RedisClient) =>
 			const currentPlan = await client.json.get(`plan:${id}`);
 			if (!currentPlan) {
 				return c.json({ error: 'Plan not found' }, 404);
+			}
+
+			if (ifNoneMatch && ifNoneMatch === (await etag_internal(currentPlan, true))) {
+				return c.body(null, 304);
+			}
+
+			if (ifMatch == null) {
+				return c.json({ error: 'Etag required' }, 412);
 			}
 
 			if (ifMatch && ifMatch !== (await etag_internal(currentPlan, true))) {
