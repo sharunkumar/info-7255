@@ -18,9 +18,7 @@ describe('plan', () => {
 		const createResponse = await planTestClient.index.$post({ json: payload });
 		expect(createResponse.status).toEqual(201);
 
-		const { success, data, error } = PlanSchema.safeParse(
-			await createResponse.json(),
-		);
+		const { success, data, error } = PlanSchema.safeParse(await createResponse.json());
 		expect(success).toBeTruthy();
 		expect(data).toEqual(payload);
 
@@ -49,9 +47,7 @@ describe('plan', () => {
 		});
 		expect(planById.status).toEqual(200);
 
-		const { success, data, error } = PlanSchema.safeParse(
-			await planById.json(),
-		);
+		const { success, data, error } = PlanSchema.safeParse(await planById.json());
 		expect(success).toBeTruthy();
 		expect(data).toEqual(payload);
 
@@ -66,9 +62,7 @@ describe('plan', () => {
 		const createResponse = await planTestClient.index.$post({ json: payload });
 		expect(createResponse.status).toEqual(201);
 
-		const { success, data, error } = PlanSchema.safeParse(
-			await createResponse.json(),
-		);
+		const { success, data, error } = PlanSchema.safeParse(await createResponse.json());
 		expect(success).toBeTruthy();
 		expect(data).toEqual(payload);
 

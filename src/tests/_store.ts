@@ -1,9 +1,4 @@
-import {
-	PatchPlanSchema,
-	PlanSchema,
-	type PatchPlan,
-	type Plan,
-} from '../schema/schema';
+import { PatchPlanSchema, PlanSchema, type PatchPlan, type Plan } from '../schema/schema';
 import { default as createPlanPayloadForPatchJSON } from '../schema/samples/plan.patch.1.create.sample.json';
 import { default as patchPlanPayloadJSON } from '../schema/samples/plan.patch.2.sample.json';
 import { default as finalPatchedPlanResponseJSON } from '../schema/samples/plan.patch.3.get.sample.json';
@@ -61,15 +56,9 @@ export const getCreatePlanPayload = (): Plan => ({
 	creationDate: '12-12-2017',
 });
 
-export const createPlanPayloadForPatch = PlanSchema.parse(
-	createPlanPayloadForPatchJSON,
-);
-
+export const createPlanPayloadForPatch = PlanSchema.parse(createPlanPayloadForPatchJSON);
 export const patchPlanPayload = PatchPlanSchema.parse(patchPlanPayloadJSON);
-
-export const finalPatchedPlanResponse = PlanSchema.parse(
-	finalPatchedPlanResponseJSON,
-);
+export const finalPatchedPlanResponse = PlanSchema.parse(finalPatchedPlanResponseJSON);
 
 export const getPatchPlanPayload = (createPayload: Plan): PatchPlan => {
 	return {

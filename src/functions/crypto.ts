@@ -12,8 +12,6 @@ export async function verify(user_password: string, db_password: string) {
 }
 
 export async function etag_internal(data: unknown, weak: boolean) {
-	const hash = await sha1(
-		new TextEncoder().encode(String(JSON.stringify(data))),
-	);
+	const hash = await sha1(new TextEncoder().encode(String(JSON.stringify(data))));
 	return weak ? `W/"${hash}"` : `"${hash}"`;
 }

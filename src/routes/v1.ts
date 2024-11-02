@@ -5,6 +5,4 @@ import { etag } from 'hono/etag';
 
 const redisClient = await getRedisClient();
 
-export const v1 = new Hono()
-	.use(etag({ weak: true }))
-	.route('/plan', plan(redisClient));
+export const v1 = new Hono().use(etag({ weak: true })).route('/plan', plan(redisClient));

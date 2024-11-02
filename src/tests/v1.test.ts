@@ -5,13 +5,7 @@ import { etag_internal } from '../functions/crypto';
 import { getRedisClient } from '../functions/get-redis-client';
 import { v1 } from '../routes/v1';
 import { PlanSchema } from '../schema/schema';
-import {
-	createPlanPayloadForPatch,
-	finalPatchedPlanResponse,
-	getCreatePlanPayload,
-	getPatchPlanPayload,
-	patchPlanPayload,
-} from './_store';
+import { createPlanPayloadForPatch, finalPatchedPlanResponse, getCreatePlanPayload, getPatchPlanPayload, patchPlanPayload } from './_store';
 
 const v1TestClient = testClient(v1);
 
@@ -55,10 +49,7 @@ describe('v1', () => {
 		const etag = nullthrows(response.headers.get('ETag'));
 		expect(etag).toBeTruthy();
 
-		const getResponse = await v1TestClient.plan[':id'].$get(
-			{ param: { id: payload.objectId } },
-			{ headers: { 'If-None-Match': etag } },
-		);
+		const getResponse = await v1TestClient.plan[':id'].$get({ param: { id: payload.objectId } }, { headers: { 'If-None-Match': etag } });
 		expect(getResponse.status).toEqual(304);
 	});
 
@@ -101,10 +92,7 @@ describe('v1', () => {
 			...patchPlanPayload,
 			objectId: 'new-id',
 		};
-		const patchResponse = await v1TestClient.plan[':id'].$patch(
-			{ param: { id: payload.objectId }, json },
-			{ headers: { 'If-Match': etag } },
-		);
+		const patchResponse = await v1TestClient.plan[':id'].$patch({ param: { id: payload.objectId }, json }, { headers: { 'If-Match': etag } });
 		expect(patchResponse.status).toEqual(412);
 	});
 
@@ -125,9 +113,7 @@ describe('v1', () => {
 		);
 		expect(patchResponse.status).toEqual(200);
 
-		const { success, data, error } = PlanSchema.safeParse(
-			await patchResponse.json(),
-		);
+		const { success, data, error } = PlanSchema.safeParse(await patchResponse.json());
 		expect(success).toBeTruthy();
 		expect(data).toEqual(finalPatchedPlanResponse);
 

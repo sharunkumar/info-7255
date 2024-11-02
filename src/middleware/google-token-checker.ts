@@ -2,10 +2,7 @@ import { bearerAuth } from 'hono/bearer-auth';
 import { OAuth2Client } from 'google-auth-library';
 import nullthrows from 'nullthrows';
 
-const clientId = nullthrows(
-	process.env.GOOGLE_CLIENT_ID,
-	'GOOGLE_CLIENT_ID is required',
-);
+const clientId = nullthrows(process.env.GOOGLE_CLIENT_ID, 'GOOGLE_CLIENT_ID is required');
 
 export const google_token_checker = bearerAuth({
 	verifyToken: async (token, _) => {

@@ -16,7 +16,12 @@
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"lineWidth": 160,
+		"indentStyle": "tab",
+		"ignore": [
+			"*.schema.json",
+			"node_modules"
+		]
 	},
 	"organizeImports": {
 		"enabled": true
