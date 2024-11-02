@@ -72,7 +72,7 @@ export const plan = (client: RedisClient) =>
 				return c.body(null, 304);
 			}
 
-			if (ifMatch == null) {
+			if (ifMatch == null && ifNoneMatch == null) {
 				return c.json({ error: 'Etag required' }, 412);
 			}
 
