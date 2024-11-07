@@ -17,7 +17,7 @@
   "dependencies": {
     "@hono/oauth-providers": "^0.6.2",
     "@hono/swagger-ui": "^0.4.1",
-    "@hono/zod-openapi": "^0.16.4",
+    "@hono/zod-openapi": "^0.17.0",
     "@hono/zod-validator": "^0.4.1",
     "google-auth-library": "^9.14.2",
     "hono": "^4.6.7",
