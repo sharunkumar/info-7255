@@ -1,5 +1,3 @@
-import { sha1 } from 'hono/etag';
-
 export async function hash(password: string) {
 	return await Bun.password.hash(password, {
 		algorithm: 'bcrypt',
@@ -12,6 +10,8 @@ export async function verify(user_password: string, db_password: string) {
 }
 
 export async function etag_internal(data: unknown, weak: boolean) {
-	const hash = await sha1(new TextEncoder().encode(String(JSON.stringify(data))));
+	const hasher = new Bun.CryptoHasher('sha1');
+	hasher.update(JSON.stringify(data));
+	const hash = hasher.digest('hex');
 	return weak ? `W/"${hash}"` : `"${hash}"`;
 }
