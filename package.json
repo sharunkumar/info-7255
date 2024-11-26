@@ -19,8 +19,8 @@
     "@hono/swagger-ui": "^0.5.0",
     "@hono/zod-openapi": "^0.18.0",
     "@hono/zod-validator": "^0.4.1",
-    "google-auth-library": "^9.14.2",
-    "hono": "^4.6.7",
+    "google-auth-library": "^9.15.0",
+    "hono": "^4.6.12",
     "nullthrows": "^1.1.1",
     "redis": "^4.7.0",
     "zod": "^3.23.8",
@@ -28,8 +28,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@types/bun": "^1.1.12",
-    "concurrently": "^9.0.1"
+    "@types/bun": "^1.1.14",
+    "concurrently": "^9.1.0"
   },
   "patchedDependencies": {
     "hono@4.6.7": "patches/hono@4.6.7.patch"
