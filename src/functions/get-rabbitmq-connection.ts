@@ -12,7 +12,11 @@ export async function getRabbitMQConnection() {
 		}
 	}
 
-	console.log('Connected to RabbitMQ');
+	console.log('Connected to RabbitMQ. http://localhost:15672');
+
+	const channel = await connection.createChannel();
+
+	await channel.assertQueue('plan-queue');
 
 	return connection;
 }
