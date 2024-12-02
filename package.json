@@ -3,6 +3,7 @@
   "scripts": {
     "start": "bun src/index.ts",
     "start:elastic": "curl -fsSL https://elastic.co/start-local | sh || sh elastic-start-local/start.sh",
+    "stop:elastic": "sh elastic-start-local/stop.sh",
     "dev": "concurrently --prefix-colors auto bun:dev:*",
     "dev:server": "bun run --hot src/index.ts",
     "dev:redis": "docker run --rm --name redis-local -p 6379:6379 -i redis/redis-stack-server:latest",
