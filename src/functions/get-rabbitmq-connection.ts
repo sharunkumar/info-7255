@@ -1,6 +1,17 @@
 import amqplib from 'amqplib';
 
-export async function getRabbitMQConnection() {
+type RabbitMQConnection = {
+	connection: amqplib.Connection;
+	queue: string;
+	exchange: string;
+	routingKey: string;
+};
+
+export async function getRabbitMQConnection(): Promise<RabbitMQConnection> {
+	const queue = 'myQueue';
+	const exchange = 'myExchange';
+	const routingKey = 'my.routingKey';
+
 	let connection: amqplib.Connection | null = null;
 
 	while (!connection) {
@@ -16,7 +27,14 @@ export async function getRabbitMQConnection() {
 
 	const channel = await connection.createChannel();
 
-	await channel.assertQueue('plan-queue');
+	// Set up exchange
+	await channel.assertExchange(exchange, 'direct', { durable: true });
 
-	return connection;
+	// Set up queue
+	await channel.assertQueue(queue, { durable: true });
+
+	// Bind queue to exchange with routing key
+	await channel.bindQueue(queue, exchange, routingKey);
+
+	return { connection, queue, exchange, routingKey };
 }
