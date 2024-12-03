@@ -40,19 +40,19 @@ export async function getRabbitMQConnection(elasticClient: Client): Promise<Rabb
 	await channel.bindQueue(queue, exchange, routingKey);
 
 	// Set up consumer to forward messages to Elasticsearch
-	channel.consume(queue, async (msg) => {
-		if (msg) {
+	channel.consume(queue, async (message) => {
+		if (message) {
 			try {
-				const body = JSON.parse(msg.content.toString());
+				const body = JSON.parse(message.content.toString());
 				console.log('Received message:', body);
 
 				// Index the message in Elasticsearch
 				const indexResponse = await elasticClient.index({ index, body });
 				console.log({ indexResponse });
-				channel.ack(msg);
+				channel.ack(message);
 			} catch (error) {
 				console.error('Error processing message:', error);
-				channel.nack(msg);
+				channel.nack(message);
 			}
 		}
 	});
