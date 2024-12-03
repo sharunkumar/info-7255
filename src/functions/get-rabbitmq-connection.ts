@@ -43,7 +43,7 @@ export async function getRabbitMQConnection(elasticClient: Client): Promise<Rabb
 	channel.consume(queue, async (message) => {
 		if (message) {
 			try {
-				const body = JSON.parse(message.content.toString());
+				const body = JSON.parse(message.content.toString()); // TODO: Parse using plan schema and update parents/children
 				console.log('Received message:', body);
 
 				// Index the message in Elasticsearch
