@@ -1,9 +1,9 @@
 import { Client } from '@elastic/elasticsearch';
 import type { MappingTypeMapping } from '@elastic/elasticsearch/api/types';
 
-const INDEX_NAME = 'plan';
+export const index = 'plan';
 
-const mapping: MappingTypeMapping = {
+const mappings: MappingTypeMapping = {
 	properties: {
 		planType: { type: 'keyword' },
 		creationDate: {
@@ -71,18 +71,16 @@ export async function getElasticsearchClient() {
 		// console.log('Elasticsearch cluster is running');
 
 		// // Check if index exists
-		const indexExists = await client.indices.exists({
-			index: INDEX_NAME,
-		});
+		const indexExists = await client.indices.exists({ index });
 
 		if (!indexExists.body) {
 			await client.indices.create({
-				index: INDEX_NAME,
+				index,
 				body: {
-					mappings: mapping,
+					mappings,
 				},
 			});
-			console.log(`Index created: ${INDEX_NAME}`);
+			console.log(`Index created: ${index}`);
 		}
 
 		return client;

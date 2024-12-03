@@ -1,5 +1,6 @@
 import amqplib from 'amqplib';
 import type { Client } from '@elastic/elasticsearch';
+import { index } from './get-elasticsearch-client';
 
 type RabbitMQConnection = {
 	connection: amqplib.Connection;
@@ -42,21 +43,12 @@ export async function getRabbitMQConnection(elasticClient: Client): Promise<Rabb
 	channel.consume(queue, async (msg) => {
 		if (msg) {
 			try {
-				const content = JSON.parse(msg.content.toString());
-
-				console.log('Received message:', content);
+				const body = JSON.parse(msg.content.toString());
+				console.log('Received message:', body);
 
 				// Index the message in Elasticsearch
-				// await elasticClient.index({
-				// 	index: 'rabbitmq-messages',
-				// 	document: {
-				// 		content,
-				// 		timestamp: new Date(),
-				// 		routingKey,
-				// 		exchange,
-				// 	},
-				// });
-
+				const indexResponse = await elasticClient.index({ index, body });
+				console.log({ indexResponse });
 				channel.ack(msg);
 			} catch (error) {
 				console.error('Error processing message:', error);
@@ -64,9 +56,6 @@ export async function getRabbitMQConnection(elasticClient: Client): Promise<Rabb
 			}
 		}
 	});
-
-	const result = channel.sendToQueue(queue, Buffer.from(JSON.stringify({ message: 'Hello from RabbitMQ!' })));
-	console.log({ result });
 
 	return { connection, channel, queue, exchange, routingKey };
 }
