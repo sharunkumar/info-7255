@@ -1,6 +1,6 @@
 import amqplib from 'amqplib';
 
-type RabbitMQConnection = {
+export type RabbitMQConnection = {
   connection: amqplib.Connection;
   channel: amqplib.Channel;
   queue: string;
@@ -53,4 +53,10 @@ export async function getRabbitMQConnection(): Promise<RabbitMQConnection> {
   });
 
   return { connection, channel, queue, exchange, routingKey };
+}
+
+export function sendToQueue(connecion: RabbitMQConnection, payload: unknown) {
+  const { channel, exchange, routingKey } = connecion;
+  const message = JSON.stringify(payload);
+  channel.publish(exchange, routingKey, Buffer.from(message));
 }

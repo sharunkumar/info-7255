@@ -9,8 +9,9 @@ import { patchPlanByIdSpec } from './patch-plan-by-id';
 import { deepSavePlan } from '../../functions/deep-save-plan';
 import { deepDeletePlan } from '../../functions/deep-delete-plan';
 import { etag_internal } from '../../functions/crypto';
+import { sendToQueue, type RabbitMQConnection } from '../../functions/get-rabbitmq-connection';
 
-export const plan = (client: RedisClient) =>
+export const plan = (client: RedisClient, rabbit: RabbitMQConnection) =>
   new OpenAPIHono()
     .openapi(createPlanSpec, async (c) => {
       const plan = c.req.valid('json');
@@ -18,6 +19,7 @@ export const plan = (client: RedisClient) =>
         return c.json({ error: 'Plan already exists' }, 409);
       }
       await client.json.set(`plan:${plan.objectId}`, '$', plan);
+      sendToQueue(rabbit, plan);
       await deepSavePlan(plan, client);
       return c.json(plan, 201);
     })
