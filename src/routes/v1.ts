@@ -7,6 +7,6 @@ import { getElasticsearchClient } from '../functions/get-elasticsearch-client';
 
 const redisClient = await getRedisClient();
 const elasticClient = await getElasticsearchClient();
-const rabbitMQConnection = getRabbitMQConnection(elasticClient);
+const rabbitMQConnection = getRabbitMQConnection();
 
 export const v1 = new Hono().use(etag({ weak: true })).route('/plan', plan(redisClient));

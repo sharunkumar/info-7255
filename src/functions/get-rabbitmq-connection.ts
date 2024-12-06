@@ -1,6 +1,4 @@
 import amqplib from 'amqplib';
-import type { Client } from '@elastic/elasticsearch';
-import { index } from './get-elasticsearch-client';
 
 type RabbitMQConnection = {
 	connection: amqplib.Connection;
@@ -10,7 +8,7 @@ type RabbitMQConnection = {
 	routingKey: string;
 };
 
-export async function getRabbitMQConnection(elasticClient: Client): Promise<RabbitMQConnection> {
+export async function getRabbitMQConnection(): Promise<RabbitMQConnection> {
 	const queue = 'myQueue';
 	const exchange = 'myExchange';
 	const routingKey = 'my.routingKey';
@@ -46,9 +44,6 @@ export async function getRabbitMQConnection(elasticClient: Client): Promise<Rabb
 				const body = JSON.parse(message.content.toString()); // TODO: Parse using plan schema and update parents/children
 				console.log('Received message:', body);
 
-				// Index the message in Elasticsearch
-				const indexResponse = await elasticClient.index({ index, body });
-				console.log({ indexResponse });
 				channel.ack(message);
 			} catch (error) {
 				console.error('Error processing message:', error);
