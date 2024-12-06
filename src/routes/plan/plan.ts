@@ -1,6 +1,6 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 import type { RedisClient } from '../../functions/get-redis-client';
-import { PlanSchema } from '../../schema/schema';
+import { PayloadSchema, PlanSchema } from '../../schema/schema';
 import { createPlanSpec } from './create-plan';
 import { deletePlanByIdSpec } from './delete-plan-by-id';
 import { getAllPlansSpec } from './get-all-plans';
@@ -40,7 +40,7 @@ export const plan = (redis: RedisClient, rabbit: RabbitMQConnection, elastic: Cl
         return c.json({ error: 'Plan does not exist' }, 404);
       }
       await redis.json.del(`plan:${id}`);
-      sendToQueue(rabbit, { operation: 'delete', data: plan });
+      sendToQueue(rabbit, PayloadSchema.parse({ operation: 'delete', data: plan }));
       await deepDeletePlan(PlanSchema.parse(plan), redis, elastic);
       return c.body(null, 204);
     })
@@ -99,7 +99,7 @@ export const plan = (redis: RedisClient, rabbit: RabbitMQConnection, elastic: Cl
       }
       const updatedPlan = await redis.json.get(`plan:${id}`);
       await redis.json.set(`plan:${id}`, '$', updatedPlan);
-      sendToQueue(rabbit, { operation: 'update', data: updatedPlan });
+      sendToQueue(rabbit, PayloadSchema.parse({ operation: 'update', data: updatedPlan }));
       await deepSavePlan(PlanSchema.parse(updatedPlan), redis, elastic);
       return c.json(PlanSchema.parse(updatedPlan));
     });
