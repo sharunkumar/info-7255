@@ -1,5 +1,9 @@
 import { Client } from '@elastic/elasticsearch';
 import type { MappingTypeMapping } from '@elastic/elasticsearch/api/types';
+import { configDotenv } from 'dotenv';
+import nullthrows from 'nullthrows';
+
+configDotenv({ path: 'elastic-start-local/.env' });
 
 export const index = 'plan';
 
@@ -62,7 +66,7 @@ export async function getElasticsearchClient() {
     const client = new Client({
       node: 'http://localhost:9200',
       auth: {
-        apiKey: 'cUk1aWlwTUJPU05UYzVGRUtqNW86VHU5aURuelBSOGV4MUJfa05VOEV0UQ==',
+        apiKey: nullthrows(process.env.ES_LOCAL_API_KEY, 'ES_LOCAL_API_KEY is not defined'),
       },
     });
 

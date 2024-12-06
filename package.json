@@ -27,6 +27,7 @@
     "@hono/zod-openapi": "^0.18.3",
     "@hono/zod-validator": "^0.4.1",
     "amqplib": "^0.10.5",
+    "dotenv": "^16.4.7",
     "google-auth-library": "^9.15.0",
     "hono": "^4.6.13",
     "nullthrows": "^1.1.1",
