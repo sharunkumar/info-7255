@@ -10,22 +10,23 @@ import { deepSavePlan } from '../../functions/deep-save-plan';
 import { deepDeletePlan } from '../../functions/deep-delete-plan';
 import { etag_internal } from '../../functions/crypto';
 import { sendToQueue, type RabbitMQConnection } from '../../functions/get-rabbitmq-connection';
+import type { Client } from '@elastic/elasticsearch';
 
-export const plan = (client: RedisClient, rabbit: RabbitMQConnection) =>
+export const plan = (redis: RedisClient, rabbit: RabbitMQConnection, elastic: Client) =>
   new OpenAPIHono()
     .openapi(createPlanSpec, async (c) => {
       const plan = c.req.valid('json');
-      if (await client.exists(`plan:${plan.objectId}`)) {
+      if (await redis.exists(`plan:${plan.objectId}`)) {
         return c.json({ error: 'Plan already exists' }, 409);
       }
-      await client.json.set(`plan:${plan.objectId}`, '$', plan);
+      await redis.json.set(`plan:${plan.objectId}`, '$', plan);
       sendToQueue(rabbit, plan);
-      await deepSavePlan(plan, client);
+      await deepSavePlan(plan, redis, elastic);
       return c.json(plan, 201);
     })
     .openapi(getPlanByIdSpec, async (c) => {
       const id = c.req.param('id');
-      const planJson = await client.json.get(`plan:${id}`);
+      const planJson = await redis.json.get(`plan:${id}`);
       if (!planJson) {
         return c.body(null, 404);
       }
@@ -33,21 +34,21 @@ export const plan = (client: RedisClient, rabbit: RabbitMQConnection) =>
     })
     .openapi(deletePlanByIdSpec, async (c) => {
       const id = c.req.param('id');
-      const plan = await client.json.get(`plan:${id}`);
+      const plan = await redis.json.get(`plan:${id}`);
       if (plan == null) {
         return c.json({ error: 'Plan does not exist' }, 404);
       }
-      await client.json.del(`plan:${id}`);
-      await deepDeletePlan(PlanSchema.parse(plan), client);
+      await redis.json.del(`plan:${id}`);
+      await deepDeletePlan(PlanSchema.parse(plan), redis, elastic);
       return c.body(null, 204);
     })
     .openapi(getAllPlansSpec, async (c) => {
-      const planKeys = await client.keys('plan:*');
+      const planKeys = await redis.keys('plan:*');
       const plans = (
         await Promise.allSettled(
           planKeys
             .flatMap(async (key) => {
-              const planJson = await client.json.get(key);
+              const planJson = await redis.json.get(key);
               return PlanSchema.parse(planJson);
             })
             .filter((plan) => plan != null),
@@ -65,7 +66,7 @@ export const plan = (client: RedisClient, rabbit: RabbitMQConnection) =>
         return c.json({ error: 'objectId mismatch' }, 412);
       }
 
-      const currentPlan = await client.json.get(`plan:${id}`);
+      const currentPlan = await redis.json.get(`plan:${id}`);
       if (!currentPlan) {
         return c.json({ error: 'Plan not found' }, 404);
       }
@@ -82,21 +83,21 @@ export const plan = (client: RedisClient, rabbit: RabbitMQConnection) =>
         return c.json({ error: 'Etag mismatch' }, 412);
       }
 
-      await deepDeletePlan(PlanSchema.parse(currentPlan), client);
+      await deepDeletePlan(PlanSchema.parse(currentPlan), redis, elastic);
 
       for (const [key, value] of Object.entries(updates)) {
         if (value !== null && typeof value === 'object') {
           if (Array.isArray(value)) {
-            await client.json.arrAppend(`plan:${id}`, `$.${key}`, ...value);
+            await redis.json.arrAppend(`plan:${id}`, `$.${key}`, ...value);
           } else {
-            await client.json.merge(`plan:${id}`, `$.${key}`, value);
+            await redis.json.merge(`plan:${id}`, `$.${key}`, value);
           }
         } else {
-          await client.json.set(`plan:${id}`, `$.${key}`, value);
+          await redis.json.set(`plan:${id}`, `$.${key}`, value);
         }
       }
-      const updatedPlan = await client.json.get(`plan:${id}`);
-      await client.json.set(`plan:${id}`, '$', updatedPlan);
-      await deepSavePlan(PlanSchema.parse(updatedPlan), client);
+      const updatedPlan = await redis.json.get(`plan:${id}`);
+      await redis.json.set(`plan:${id}`, '$', updatedPlan);
+      await deepSavePlan(PlanSchema.parse(updatedPlan), redis, elastic);
       return c.json(PlanSchema.parse(updatedPlan));
     });

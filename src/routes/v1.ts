@@ -9,4 +9,4 @@ const redisClient = await getRedisClient();
 const rabbitMQConnection = await getRabbitMQConnection();
 const elasticClient = await getElasticsearchClient();
 
-export const v1 = new Hono().use(etag({ weak: true })).route('/plan', plan(redisClient, rabbitMQConnection));
+export const v1 = new Hono().use(etag({ weak: true })).route('/plan', plan(redisClient, rabbitMQConnection, elasticClient));

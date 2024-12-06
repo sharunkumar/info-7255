@@ -1,16 +1,17 @@
+import type { Client } from '@elastic/elasticsearch';
 import type { Plan } from '../schema/schema';
 import type { RedisClient } from './get-redis-client';
 
-export async function deepSavePlan({ planCostShares, linkedPlanServices }: Plan, client: RedisClient) {
-  await client.json.set(`${planCostShares.objectType}:${planCostShares.objectId}`, '$', planCostShares);
+export async function deepSavePlan({ planCostShares, linkedPlanServices }: Plan, redis: RedisClient, elastic: Client) {
+  await redis.json.set(`${planCostShares.objectType}:${planCostShares.objectId}`, '$', planCostShares);
 
   await Promise.all(
     linkedPlanServices.map(async (linkedPlanService) => {
-      await client.json.set(`${linkedPlanService.objectType}:${linkedPlanService.objectId}`, '$', linkedPlanService);
+      await redis.json.set(`${linkedPlanService.objectType}:${linkedPlanService.objectId}`, '$', linkedPlanService);
 
       const { linkedService, planserviceCostShares } = linkedPlanService;
-      await client.json.set(`${linkedService.objectType}:${linkedService.objectId}`, '$', linkedService);
-      await client.json.set(`${planserviceCostShares.objectType}:${planserviceCostShares.objectId}`, '$', planserviceCostShares);
+      await redis.json.set(`${linkedService.objectType}:${linkedService.objectId}`, '$', linkedService);
+      await redis.json.set(`${planserviceCostShares.objectType}:${planserviceCostShares.objectId}`, '$', planserviceCostShares);
     }),
   );
 }
