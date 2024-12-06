@@ -41,7 +41,7 @@ export async function getRabbitMQConnection(): Promise<RabbitMQConnection> {
   channel.consume(queue, async (message) => {
     if (message) {
       try {
-        const body = JSON.parse(message.content.toString()); // TODO: Parse using plan schema and update parents/children
+        const body = JSON.parse(message.content.toString());
         console.log('Received message:', body);
 
         channel.ack(message);
@@ -53,10 +53,4 @@ export async function getRabbitMQConnection(): Promise<RabbitMQConnection> {
   });
 
   return { connection, channel, queue, exchange, routingKey };
-}
-
-export function sendToQueue(connecion: RabbitMQConnection, payload: unknown) {
-  const { channel, exchange, routingKey } = connecion;
-  const message = JSON.stringify(payload);
-  channel.publish(exchange, routingKey, Buffer.from(message));
 }

@@ -9,8 +9,9 @@ import { patchPlanByIdSpec } from './patch-plan-by-id';
 import { deepSavePlan } from '../../functions/deep-save-plan';
 import { deepDeletePlan } from '../../functions/deep-delete-plan';
 import { etag_internal } from '../../functions/crypto';
-import { sendToQueue, type RabbitMQConnection } from '../../functions/get-rabbitmq-connection';
+import type { RabbitMQConnection } from '../../functions/get-rabbitmq-connection';
 import type { Client } from '@elastic/elasticsearch';
+import { sendToQueue } from '../../functions/send-to-queue';
 
 export const plan = (redis: RedisClient, rabbit: RabbitMQConnection, elastic: Client) =>
   new OpenAPIHono()
@@ -20,7 +21,7 @@ export const plan = (redis: RedisClient, rabbit: RabbitMQConnection, elastic: Cl
         return c.json({ error: 'Plan already exists' }, 409);
       }
       await redis.json.set(`plan:${plan.objectId}`, '$', plan);
-      sendToQueue(rabbit, plan);
+      sendToQueue(rabbit, { operation: 'create', data: plan });
       await deepSavePlan(plan, redis, elastic);
       return c.json(plan, 201);
     })
@@ -39,6 +40,7 @@ export const plan = (redis: RedisClient, rabbit: RabbitMQConnection, elastic: Cl
         return c.json({ error: 'Plan does not exist' }, 404);
       }
       await redis.json.del(`plan:${id}`);
+      sendToQueue(rabbit, { operation: 'delete', data: plan });
       await deepDeletePlan(PlanSchema.parse(plan), redis, elastic);
       return c.body(null, 204);
     })
@@ -84,7 +86,6 @@ export const plan = (redis: RedisClient, rabbit: RabbitMQConnection, elastic: Cl
       }
 
       await deepDeletePlan(PlanSchema.parse(currentPlan), redis, elastic);
-
       for (const [key, value] of Object.entries(updates)) {
         if (value !== null && typeof value === 'object') {
           if (Array.isArray(value)) {
@@ -98,6 +99,7 @@ export const plan = (redis: RedisClient, rabbit: RabbitMQConnection, elastic: Cl
       }
       const updatedPlan = await redis.json.get(`plan:${id}`);
       await redis.json.set(`plan:${id}`, '$', updatedPlan);
+      sendToQueue(rabbit, { operation: 'update', data: updatedPlan });
       await deepSavePlan(PlanSchema.parse(updatedPlan), redis, elastic);
       return c.json(PlanSchema.parse(updatedPlan));
     });
