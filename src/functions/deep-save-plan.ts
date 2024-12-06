@@ -1,6 +1,7 @@
 import type { Client } from '@elastic/elasticsearch';
 import type { Plan } from '../schema/schema';
 import type { RedisClient } from './get-redis-client';
+import { index } from './get-elasticsearch-client';
 
 export async function deepSavePlan({ planCostShares, linkedPlanServices }: Plan, redis: RedisClient, elastic: Client) {
   await redis.json.set(`${planCostShares.objectType}:${planCostShares.objectId}`, '$', planCostShares);
