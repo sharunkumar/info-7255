@@ -51,5 +51,16 @@ export const PatchPlanSchema = z
   })
   .strict();
 
+export const PayloadSchema = z
+  .object({
+    operation: z.enum(['create', 'update', 'delete']),
+    data: z.object({
+      objectType: z.string(),
+      objectId: z.string(),
+    }),
+  })
+  .passthrough();
+
 export type Plan = z.infer<typeof PlanSchema>;
 export type PatchPlan = z.infer<typeof PatchPlanSchema>;
+export type Payload = z.infer<typeof PayloadSchema>;

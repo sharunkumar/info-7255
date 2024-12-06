@@ -11,13 +11,14 @@
     "dev": "concurrently --prefix-colors auto bun:dev:*",
     "dev:server": "bun run --hot src/index.ts",
     "dev:redis": "docker run --rm --name redis-local -p 6379:6379 -i redis/redis-stack-server:latest",
+    "dev:consumer": "bun run src/services/plan-consumer.ts",
     "dev:api-client": "bruno",
     "schema:generate": "bun run src/scripts/generate-schema.ts",
     "format:write": "biome format --write src",
     "lint:write": "biome lint --write src",
     "lint": "biome lint src",
-    "test:api": "concurrently --prefix-colors auto bun:dev:redis 'bun test --watch {plan,v1}'",
-    "test:coverage": "concurrently --prefix-colors auto bun:dev:redis 'bun test --coverage --watch'",
+    "test:api": "concurrently --prefix-colors auto bun:dev:redis bun:dev:consumer 'bun test --watch {plan,v1}'",
+    "test:coverage": "concurrently --prefix-colors auto bun:dev:redis bun:dev:consumer 'bun test --coverage --watch'",
     "build": "bun build --compile src/index.ts --outfile dist/api"
   },
   "dependencies": {

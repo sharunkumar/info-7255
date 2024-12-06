@@ -4,9 +4,13 @@ import { getRedisClient } from '../functions/get-redis-client';
 import { plan } from '../routes/plan/plan';
 import { PlanSchema } from '../schema/schema';
 import { getCreatePlanPayload } from './_store';
+import { getRabbitMQConnection } from '../functions/get-rabbitmq-connection';
+import { getElasticsearchClient } from '../functions/get-elasticsearch-client';
 
 const redisClient = await getRedisClient();
-const planTestClient = testClient(plan(redisClient));
+const rabbitMQConnection = await getRabbitMQConnection();
+const elasticClient = await getElasticsearchClient();
+const planTestClient = testClient(plan(redisClient, rabbitMQConnection, elasticClient));
 
 afterAll(async () => {
   await redisClient.flushAll();

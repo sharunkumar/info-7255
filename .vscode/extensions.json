@@ -4,5 +4,6 @@
         "chrisbibby.hide-node-modules",
         "bruno-api-client.bruno",
         "biomejs.biome",
+        "cweijan.vscode-es-client2",
     ]
 }

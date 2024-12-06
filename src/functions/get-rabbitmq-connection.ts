@@ -1,6 +1,6 @@
 import amqplib from 'amqplib';
 
-type RabbitMQConnection = {
+export type RabbitMQConnection = {
   connection: amqplib.Connection;
   channel: amqplib.Channel;
   queue: string;
@@ -36,21 +36,6 @@ export async function getRabbitMQConnection(): Promise<RabbitMQConnection> {
 
   // Bind queue to exchange with routing key
   await channel.bindQueue(queue, exchange, routingKey);
-
-  // Set up consumer to forward messages to Elasticsearch
-  channel.consume(queue, async (message) => {
-    if (message) {
-      try {
-        const body = JSON.parse(message.content.toString()); // TODO: Parse using plan schema and update parents/children
-        console.log('Received message:', body);
-
-        channel.ack(message);
-      } catch (error) {
-        console.error('Error processing message:', error);
-        channel.nack(message);
-      }
-    }
-  });
 
   return { connection, channel, queue, exchange, routingKey };
 }
