@@ -17,7 +17,7 @@
 	"formatter": {
 		"enabled": true,
 		"lineWidth": 160,
-		"indentStyle": "tab",
+		"indentStyle": "space",
 		"ignore": [
 			"*.schema.json",
 			"node_modules"
