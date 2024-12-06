@@ -75,3 +75,4 @@ package-lock.json
 
 # elastic-local
 elastic-start-local/
+*.log
