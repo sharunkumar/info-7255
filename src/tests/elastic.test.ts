@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test';
+import { afterAll, describe, expect, it } from 'bun:test';
 import { getElasticsearchClient, index } from '../functions/get-elasticsearch-client';
 import { getCreatePlanPayload } from './_store';
 
@@ -26,4 +26,9 @@ describe('Elasticsearch', () => {
     const response = await client2.indices.exists({ index });
     expect(response.body).toBeTruthy();
   });
+});
+
+afterAll(async () => {
+  const client = await getElasticsearchClient();
+  await client.indices.delete({ index });
 });
