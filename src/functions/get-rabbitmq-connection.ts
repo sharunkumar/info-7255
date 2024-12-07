@@ -28,13 +28,10 @@ export async function getRabbitMQConnection(): Promise<RabbitMQConnection> {
 
   const channel = await connection.createChannel();
 
-  // Set up exchange
   await channel.assertExchange(exchange, 'direct', { durable: true });
 
-  // Set up queue
   await channel.assertQueue(queue, { durable: true });
 
-  // Bind queue to exchange with routing key
   await channel.bindQueue(queue, exchange, routingKey);
 
   return { connection, channel, queue, exchange, routingKey };

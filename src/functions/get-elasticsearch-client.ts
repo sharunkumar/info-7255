@@ -70,11 +70,8 @@ export async function getElasticsearchClient() {
       },
     });
 
-    // Test the connection
     await client.ping();
-    // console.log('Elasticsearch cluster is running');
 
-    // // Check if index exists
     const indexExists = await client.indices.exists({ index });
 
     if (!indexExists.body) {
